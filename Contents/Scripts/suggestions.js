@@ -1,9 +1,11 @@
 // LaunchBar Action Script
 
+var maxResults = 20;
+
 function runWithString(query)
 {
   notes = LaunchBar
-    .executeAppleScriptFile('findNotes.scpt', query, 20)
+    .executeAppleScriptFile('findNotes.scpt', query, maxResults)
     .replace(/@@\\@@/g, "\\'"); // re-escaping '; cf. findNotes.scpt
   //LaunchBar.log(notes)
 
