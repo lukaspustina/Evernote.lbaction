@@ -1,4 +1,5 @@
 function run(argument) {
+  LaunchBar.executeAppleScriptFile('activateEvernote.scpt');
 }
 
 function runWithString(query) {
