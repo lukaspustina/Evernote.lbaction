@@ -63,7 +63,7 @@
 			<key>LBRunInBackground</key>
 			<true/>
 			<key>LBScriptName</key>
-			<string>suggestions.scpt</string>
+			<string>suggestions.js</string>
 		</dict>
 	</dict>
 	<key>LBTextInputTitle</key>
