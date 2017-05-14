@@ -44,7 +44,7 @@
 			<key>LBRunInBackground</key>
 			<true/>
 			<key>LBScriptName</key>
-			<string>default.scpt</string>
+			<string>default.js</string>
 		</dict>
 		<key>LBSuggestionsScript</key>
 		<dict>
