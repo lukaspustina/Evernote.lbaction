@@ -20,7 +20,7 @@ This Launchbar Action mitigates these short comings.
 
     * etc. See the above link for more.
 
-    You can open any matching note by navigating to the search result and pressing `<Return>`.
+    You can open any matching note by navigating to the search result and pressing `<Return>`. The search results show the title, the date of the last modification, the tags -- if any --, and the notebook of each matching note.
 
 1. Create new note
 
