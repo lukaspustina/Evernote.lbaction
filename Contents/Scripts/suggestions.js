@@ -5,8 +5,8 @@ var maxResults = 20;
 function runWithString(query)
 {
   notes = LaunchBar
-    .executeAppleScriptFile('findNotes.scpt', query, maxResults)
-    .replace(/@@\\@@/g, "\\'"); // re-escaping '; cf. findNotes.scpt
+    .executeAppleScriptFile('findNotes.applescript', query, maxResults)
+    .replace(/@@\\@@/g, "\\'"); // re-escaping '; cf. findNotes.applescript
   //LaunchBar.log(notes)
 
   results = eval(notes)
