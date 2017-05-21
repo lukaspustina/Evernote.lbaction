@@ -9,7 +9,7 @@
 	<key>CFBundleName</key>
 	<string>Evernote</string>
 	<key>CFBundleVersion</key>
-	<string>0.1</string>
+	<string>0.1.2</string>
 	<key>LBAssociatedApplication</key>
 	<string>com.evernote.Evernote</string>
 	<key>LBDebugLogEnabled</key>
