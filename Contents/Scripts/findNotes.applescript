@@ -1,18 +1,33 @@
 -- LaunchBar Action Script
 
-on run {query, maxResults}
+on run {query, maxResults, debug}
 	set results to {}
 	
-	tell application "Evernote"
-		set theNotes to (find notes query)
-		try
+	set _debug to false
+	if debug is equal to "true" then
+		set _debug to true
+	end if
+	
+	-- Debug
+	logger("searching with query " & query & " and returning up to  " & maxResults, _debug)
+	
+	try
+		tell application "Evernote"
+			set theNotes to (find notes query)
 			set x to 0
+			
+			-- if number of notes is less than maxResults, an exception is thrown; that's okay, we deal with it.
 			repeat maxResults as integer times
 				set x to (x + 1)
 				set theNote to item x of theNotes
 				
 				set _title to (title of theNote)
 				try
+					tell me to set _title_enc to replaceText("'", "@@\\@@", _title) -- nasty way to escape '; cf. suggestions.js
+					
+					-- Debug
+					tell me to logger("found note with title  " & _title_enc, _debug)
+					
 					tell me to set _label to replaceText("'", "@@\\@@", (name of (notebook of theNote))) -- nasty way to escape '; cf. suggestions.js
 					-- do shell script "logger '" & _label & "'"
 					set _date to ((modification date of theNote) as «class isot» as string)
@@ -31,21 +46,36 @@ on run {query, maxResults}
 						set _subtitle to _subtitle & " - " & _tags
 					end if
 					
-					set res to "{" & "title:'" & _title & "',label:'" & _label & "',date:'" & _date & "',subtitle:'" & _subtitle & "',alwaysShowsSubtitle:true,icon:'com.evernote.Evernote'" & "}"
+					set res to "{" & "title:'" & _title_enc & "',label:'" & _label & "',date:'" & _date & "',subtitle:'" & _subtitle & "',alwaysShowsSubtitle:true,icon:'com.evernote.Evernote'" & "}"
+					
+					-- Debug
+					tell me to logger("adding to results: " & res & "'", _debug)
+					
 					copy res to the end of results
 				on error msg
-					do shell script "logger 'Evernote LbAction failed for note " & _title & " because " & msg & "'"
+					logger("failed because " & msg, true)
 				end try
 			end repeat
-		on error msg
-			do shell script "logger 'Evernote LbAction failed because " & msg & "'"
-		end try
-	end tell
+		end tell
+	on error msg
+		do shell script "logger Evernote LbAction failed because " & msg
+	end try
 	
-	set text item delimiters to ","
-	set resultsAsString to results as text
+	-- Debug
+	logger("finished search with " & (length of results) & " results.", _debug)
 	
-	return "[" & resultsAsString & "]"
+	try
+		set text item delimiters to ","
+		set resultsAsString to results as text
+		-- Debug
+		logger("returning " & (length of results) & " results.", _debug)
+		
+		return "[" & resultsAsString & "]"
+	on error msg
+		logger("logger Evernote LbAction failed to create resultsAsString " & msg, true)
+	end try
+	
+	return "[]"
 end run
 
 on replaceText(find, replace, subject)
@@ -59,3 +89,11 @@ on replaceText(find, replace, subject)
 	
 	return subject
 end replaceText
+
+on logger(_text, _debug)
+	try
+		if _debug is true then
+			do shell script "logger Evernote Launchbar Action " & _text
+		end if
+	end try
+end logger

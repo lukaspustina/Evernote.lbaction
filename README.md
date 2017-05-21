@@ -49,7 +49,5 @@ This Launchbar Action mitigates these short comings.
 
 ## Known Limitations
 
-1. Notes with titles containing `'` or `"` may not be handled correctly.
-
 1. If Evernote is not running, a search will start it automatically, grabbing the focus. Thus, Lauchbar loses the focus and needs to be re-invoked.
 
