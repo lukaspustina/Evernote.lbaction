@@ -22,9 +22,11 @@ runWithString = (query) ->
       { title: "Edit Settings", path: SETTINGS_FILE }
     ]
 
+
 runWithItem = (item) ->
   LaunchBar.log("runWithItem")
   LaunchBar.log(JSON.stringify(item))
+
 
 saved_searches = (argument) ->
   LaunchBar.log("saved_searches")
@@ -32,6 +34,7 @@ saved_searches = (argument) ->
   settings = loadSettings(SETTINGS_FILE)
 
   settings.saved_searches
+
 
 search = (query) ->
   [
@@ -41,6 +44,7 @@ search = (query) ->
     { title: "Result 4: " + query }
   ]
 
+
 loadSettings = (settingsFile) ->
   object = File.readJSON(settingsFile)
   object
@@ -48,5 +52,5 @@ loadSettings = (settingsFile) ->
 
 # Export for testing only, when not running in real LaunchBar context
 if not LaunchBar.systemVersion
-  module.exports = { runWithString: runWithString }
+  module.exports = { runWithString: runWithString, loadSettings: loadSettings }
 
