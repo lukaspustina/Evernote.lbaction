@@ -1,5 +1,5 @@
 
-SETTINGS_FILE = Action.path + '/Contents/Scripts/settings.js'
+SETTINGS_FILE = "#{Action.path}/Contents/Scripts/settings.js"
 
 class Evernote
   @open: ->
@@ -7,6 +7,48 @@ class Evernote
       tell application "LaunchBar" to hide
       tell application "Evernote"
         open collection window
+        activate
+      end tell
+    """
+
+  @search = (query) ->
+    results = Evernote._evernote_search query, 20, true
+
+    # Postprocess: Add action
+    for r in results
+      r.action = 'openNote'
+
+    # Postprocess: Sort by modification date
+    results.sort (a, b) ->
+      left = new Date(a.date)
+      right = new Date(b.date)
+      if left < right
+        1
+      if left > right
+        -1
+      0
+
+    LaunchBar.log "search result: '#{JSON.stringify results}'"
+    results
+
+
+  @_evernote_search: (query, maxResults, debug) ->
+    notes = LaunchBar
+      .executeAppleScriptFile "#{Action.path}/Contents/Scripts/findNotes.applescript", query, maxResults, debug
+      .replace /@@\\@@/g, "\\'" # re-escaping '; cf. findNotes.applescript
+    if notes.length > 0
+      eval(notes)
+    else
+      []
+
+
+  @openNote: (note) ->
+    LaunchBar.log "openNote: '#{JSON.stringify note}'"
+    LaunchBar.executeAppleScript """
+      tell application "LaunchBar" to hide
+      tell application "Evernote"
+        set theNote to find note "#{note.notelink}"
+        open note window with theNote
         activate
       end tell
     """
@@ -26,12 +68,7 @@ runWithString = (query) ->
   #LaunchBar.executeAppleScriptFile('openNote.applescript', query, createNewNote)
 
   if query.length > 0
-    [
-      { title: "Result 1: " + query },
-      { title: "Result 2: " + query },
-      { title: "Result 3: " + query },
-      { title: "Result 4: " + query }
-    ]
+    Evernote.search query
   else
     [
       { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
@@ -53,18 +90,13 @@ saved_searches = (argument) ->
   settings.saved_searches
 
 
-search = (query) ->
-  [
-    { title: "Result 1: " + query },
-    { title: "Result 2: " + query },
-    { title: "Result 3: " + query },
-    { title: "Result 4: " + query }
-  ]
-
-
 loadSettings = (settingsFile) ->
   object = File.readJSON(settingsFile)
   object
+
+
+openNote = (note) ->
+  Evernote.openNote note
 
 
 # Export for testing only, when not running in real LaunchBar context
@@ -74,4 +106,5 @@ if not LaunchBar.systemVersion
     run: run
     runWithString: runWithString
     loadSettings: loadSettings
+    openNote: openNote
 
