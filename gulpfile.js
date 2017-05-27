@@ -21,5 +21,9 @@ gulp.task('test', () =>
       .pipe(mocha({reporter: 'spec', compilers: 'coffee:coffee-script/register'}))
 );
 
+gulp.task('watch', function() {
+  gulp.watch('./src/*.coffee', ['default']);
+});
+
 gulp.task('default', [ 'coffee', 'test', 'compress' ]);
 
