@@ -54,6 +54,18 @@ class Evernote
     """
 
 
+  @createNote: () ->
+    LaunchBar.log "createNote"
+    LaunchBar.executeAppleScript """
+      tell application "LaunchBar" to hide
+      tell application "Evernote"
+        set theNote to create note with text " "
+        open note window with theNote
+        activate
+      end tell
+    """
+
+
 run = (query) ->
   LaunchBar.log "run: '#{query}'"
   Evernote.open()
@@ -72,7 +84,7 @@ runWithString = (query) ->
   else
     [
       { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
-      { title: "Create new Note" },
+      { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
       { title: "Edit Settings", path: SETTINGS_FILE }
     ]
 
@@ -99,6 +111,10 @@ openNote = (note) ->
   Evernote.openNote note
 
 
+createNote = () ->
+  Evernote.createNote()
+
+
 # Export for testing only, when not running in real LaunchBar context
 if not LaunchBar.systemVersion
   module.exports =
@@ -107,4 +123,5 @@ if not LaunchBar.systemVersion
     runWithString: runWithString
     loadSettings: loadSettings
     openNote: openNote
+    createNote: createNote
 

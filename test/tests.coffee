@@ -16,6 +16,7 @@ describe 'Evernote Launchbar Action', ->
 
     sinon.spy lbaction.Evernote, 'open'
     sinon.spy lbaction.Evernote, 'openNote'
+    sinon.spy lbaction.Evernote, 'createNote'
     sinon.spy lbaction.Evernote, 'search'
     sinon.stub(lbaction.Evernote, '_evernote_search').returns [
         { title: "Result 1: " },
@@ -29,6 +30,7 @@ describe 'Evernote Launchbar Action', ->
   afterEach ->
     lbaction.Evernote._evernote_search.restore()
     lbaction.Evernote.search.restore()
+    lbaction.Evernote.createNote.restore()
     lbaction.Evernote.openNote.restore()
     lbaction.Evernote.open.restore()
     delete global.lbaction
@@ -63,13 +65,18 @@ describe 'Evernote Launchbar Action', ->
 
     context "for selected search result", ->
 
-      it "open note window", ->
+      it "open note window with selected note", ->
         results = lbaction.runWithString "a search"
         results.should.have.length 4
         lbaction.openNote(results[2])
         lbaction.Evernote.openNote.calledOnce.should.be.eql true
 
 
+  context "createNote", ->
+
+      it "open note window with new note", ->
+        lbaction.createNote()
+        lbaction.Evernote.createNote.calledOnce.should.be.eql true
 
 
   context "helper", ->

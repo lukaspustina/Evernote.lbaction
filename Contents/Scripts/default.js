@@ -1,4 +1,4 @@
-var Evernote, SETTINGS_FILE, loadSettings, openNote, run, runWithItem, runWithString, saved_searches;
+var Evernote, SETTINGS_FILE, createNote, loadSettings, openNote, run, runWithItem, runWithString, saved_searches;
 
 SETTINGS_FILE = Action.path + "/Contents/Scripts/settings.js";
 
@@ -47,6 +47,11 @@ Evernote = (function() {
     return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to find note \"" + note.notelink + "\"\n  open note window with theNote\n  activate\nend tell");
   };
 
+  Evernote.createNote = function() {
+    LaunchBar.log("createNote");
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to create note with text \" \"\n  open note window with theNote\n  activate\nend tell");
+  };
+
   return Evernote;
 
 })();
@@ -69,7 +74,9 @@ runWithString = function(query) {
         action: 'saved_searches',
         actionReturnsItems: true
       }, {
-        title: "Create new Note"
+        title: "Create new Note",
+        action: 'createNote',
+        icon: 'com.evernote.Evernote'
       }, {
         title: "Edit Settings",
         path: SETTINGS_FILE
@@ -101,12 +108,17 @@ openNote = function(note) {
   return Evernote.openNote(note);
 };
 
+createNote = function() {
+  return Evernote.createNote();
+};
+
 if (!LaunchBar.systemVersion) {
   module.exports = {
     Evernote: Evernote,
     run: run,
     runWithString: runWithString,
     loadSettings: loadSettings,
-    openNote: openNote
+    openNote: openNote,
+    createNote: createNote
   };
 }
