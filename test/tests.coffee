@@ -1,4 +1,5 @@
 rewire = require 'rewire'
+sinon = require 'sinon'
 expect = require('chai').expect
 
 describe 'Evernote Launchbar Action', ->
@@ -8,13 +9,21 @@ describe 'Evernote Launchbar Action', ->
     global.Action = new MockAction
     global.File = new MockFile
     global.lbaction = rewire '../target/default.js'
+    sinon.spy lbaction.Evernote, 'open'
     global.lbaction.SETTINGS_FILE = "#{__dirname}//test_settings.js"
 
   afterEach ->
+    lbaction.Evernote.open.restore()
     delete global.lbaction
     delete global.File
     delete global.Action
     delete global.LaunchBar
+
+  context "run", ->
+    it 'open Evernote Main Window', ->
+      lbaction.run()
+      expect(lbaction.Evernote.open.calledOnce).to.eql true
+
 
   context "runWithString", ->
 
@@ -39,6 +48,8 @@ class MockLaunchbar
   log: (msg) ->
 
   executeAppleScriptFile: (args) ->
+
+  executeAppleScript: (args) ->
 
 
 class MockAction

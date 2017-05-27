@@ -1,9 +1,26 @@
 
 SETTINGS_FILE = Action.path + '/Contents/Scripts/settings.js'
 
+class Evernote
+  @open: ->
+    LaunchBar.executeAppleScript """
+      tell application "LaunchBar" to hide
+      tell application "Evernote"
+        open collection window
+        activate
+      end tell
+    """
+
+
+run = (query) ->
+  LaunchBar.log "run: '#{query}'"
+  Evernote.open()
+  LaunchBar.log "run: '#{query}' done."
+
+
 runWithString = (query) ->
-  LaunchBar.log("runWithString")
-  LaunchBar.log(JSON.stringify(query))
+  LaunchBar.log "runWithString: '#{query}'"
+  LaunchBar.log JSON.stringify(query)
   #createNewNote = LaunchBar.options.shiftKey ? 1 : 0
 
   #LaunchBar.executeAppleScriptFile('openNote.applescript', query, createNewNote)
@@ -52,5 +69,9 @@ loadSettings = (settingsFile) ->
 
 # Export for testing only, when not running in real LaunchBar context
 if not LaunchBar.systemVersion
-  module.exports = { runWithString: runWithString, loadSettings: loadSettings }
+  module.exports =
+    Evernote: Evernote
+    run: run
+    runWithString: runWithString
+    loadSettings: loadSettings
 
