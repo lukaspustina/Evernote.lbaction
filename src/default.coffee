@@ -110,13 +110,14 @@ saved_searches = (argument) ->
   LaunchBar.log(JSON.stringify(arguments))
   settings = loadSettings(SETTINGS_FILE)
 
-  settings.saved_searches
+  mapSavedSearch(settings.saved_searches)
 
 
 loadSettings = (settingsFile) ->
-  object = {}
-  try
-    object = File.readJSON(settingsFile)
+  object = try
+    File.readJSON(settingsFile)
+  catch
+    {}
 
   if not object.debug
     object.debug = false
@@ -126,6 +127,10 @@ loadSettings = (settingsFile) ->
 
   object
 
+
+mapSavedSearch = (saved_searches) ->
+  items = ( {title: ss.name, actionArgument: ss.search, action: 'runWithString', actionReturnsItems: true }for ss in saved_searches)
+  items
 
 openNote = (note) ->
   Evernote.openNote note
@@ -146,6 +151,7 @@ if not LaunchBar.systemVersion
     run: run
     runWithString: runWithString
     loadSettings: loadSettings
+    mapSavedSearch: mapSavedSearch
     openNote: openNote
     createNote: createNote
     syncNow: syncNow

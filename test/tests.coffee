@@ -88,6 +88,16 @@ describe 'Evernote Launchbar Action', ->
         lbaction.Evernote.syncNow.calledOnce.should.be.eql true
 
 
+  context "saved search", ->
+
+    it 'run search for saved search', ->
+      settings = lbaction.loadSettings lbaction.SETTINGS_FILE
+      results = lbaction.runWithString settings.saved_searches[0].search
+      expect(lbaction.Evernote.search.calledOnce).to.eql true
+      expect(results.length).to.eql 4
+      results.should.all.have.property 'action'
+
+
   context "helper", ->
 
     context "settings", ->
@@ -134,7 +144,7 @@ describe 'Evernote Launchbar Action', ->
         items = lbaction.mapSavedSearch saved_searches
         items[0].title.should.be.eql saved_searches[0].name
         items[0].actionArgument.should.be.eql saved_searches[0].search
-        items[0].action.should.be.eql 'search'
+        items[0].action.should.be.eql 'runWithString'
         items[0].actionReturnsItems.should.be.eql true
 
 

@@ -1,4 +1,4 @@
-var Evernote, SETTINGS_FILE, createNote, loadSettings, openNote, run, runWithItem, runWithString, saved_searches, syncNow;
+var Evernote, SETTINGS_FILE, createNote, loadSettings, mapSavedSearch, openNote, run, runWithItem, runWithString, saved_searches, syncNow;
 
 SETTINGS_FILE = Action.path + "/Contents/Scripts/settings.js";
 
@@ -103,15 +103,18 @@ saved_searches = function(argument) {
   LaunchBar.log("saved_searches");
   LaunchBar.log(JSON.stringify(arguments));
   settings = loadSettings(SETTINGS_FILE);
-  return settings.saved_searches;
+  return mapSavedSearch(settings.saved_searches);
 };
 
 loadSettings = function(settingsFile) {
   var object;
-  object = {};
-  try {
-    object = File.readJSON(settingsFile);
-  } catch (error) {}
+  object = (function() {
+    try {
+      return File.readJSON(settingsFile);
+    } catch (error) {
+      return {};
+    }
+  })();
   if (!object.debug) {
     object.debug = false;
   }
@@ -119,6 +122,25 @@ loadSettings = function(settingsFile) {
     object.saved_searches = [];
   }
   return object;
+};
+
+mapSavedSearch = function(saved_searches) {
+  var items, ss;
+  items = (function() {
+    var i, len, results1;
+    results1 = [];
+    for (i = 0, len = saved_searches.length; i < len; i++) {
+      ss = saved_searches[i];
+      results1.push({
+        title: ss.name,
+        actionArgument: ss.search,
+        action: 'runWithString',
+        actionReturnsItems: true
+      });
+    }
+    return results1;
+  })();
+  return items;
 };
 
 openNote = function(note) {
@@ -139,6 +161,7 @@ if (!LaunchBar.systemVersion) {
     run: run,
     runWithString: runWithString,
     loadSettings: loadSettings,
+    mapSavedSearch: mapSavedSearch,
     openNote: openNote,
     createNote: createNote,
     syncNow: syncNow
