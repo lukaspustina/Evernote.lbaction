@@ -9,7 +9,7 @@ This Launchbar Action mitigates these short comings.
 
 1. Features
 
-    1. Reduce saved searches to name as well as search and map to menu items
+    1. [x] Reduce saved searches to name as well as search and map to menu items
 
     1. Debug mode via settings
 
