@@ -4,6 +4,28 @@ The current Evernote integration in Launchbar version 6.8 (6140) has a few short
 
 This Launchbar Action mitigates these short comings.
 
+
+## TODOs
+
+1. Features
+
+    1. Reduce saved searches to name as well as search and map to menu items
+
+    1. Debug mode via settings
+
+    1. Cmd+Return: Open Search in Evernote main window
+
+1. Refactoring
+
+1. Select Icons
+
+1. Change Info.plist back to '.Evernote'
+
+1. Fix minifying
+
+1. Update Readme
+
+
 ## Features
 
 1. Search queries may make use of the full [Evernote Search Grammar](https://dev.evernote.com/doc/articles/search_grammar.php).
