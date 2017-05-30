@@ -18,6 +18,7 @@ describe 'Evernote Launchbar Action', ->
     sinon.spy lbaction.Evernote, 'openNote'
     sinon.spy lbaction.Evernote, 'createNote'
     sinon.spy lbaction.Evernote, 'search'
+    sinon.spy lbaction.Evernote, 'syncNow'
     sinon.stub(lbaction.Evernote, '_evernote_search').returns [
         { title: "Result 1: " },
         { title: "Result 2: " },
@@ -29,6 +30,7 @@ describe 'Evernote Launchbar Action', ->
 
   afterEach ->
     lbaction.Evernote._evernote_search.restore()
+    lbaction.Evernote.syncNow.restore()
     lbaction.Evernote.search.restore()
     lbaction.Evernote.createNote.restore()
     lbaction.Evernote.openNote.restore()
@@ -50,7 +52,7 @@ describe 'Evernote Launchbar Action', ->
 
       it 'show default menu', ->
         menu = lbaction.runWithString ""
-        expect(menu.length).to.eql 3
+        expect(menu.length).to.eql 4
 
     context "for query String", ->
 
@@ -77,6 +79,13 @@ describe 'Evernote Launchbar Action', ->
       it "open note window with new note", ->
         lbaction.createNote()
         lbaction.Evernote.createNote.calledOnce.should.be.eql true
+
+
+  context "syncNow", ->
+
+      it "synchronize now", ->
+        lbaction.syncNow()
+        lbaction.Evernote.syncNow.calledOnce.should.be.eql true
 
 
   context "helper", ->

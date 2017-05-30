@@ -66,6 +66,16 @@ class Evernote
     """
 
 
+  @syncNow: () ->
+    LaunchBar.log "syncNow"
+    LaunchBar.executeAppleScript """
+      tell application "LaunchBar" to hide
+      tell application "Evernote"
+        synchronize
+      end tell
+    """
+
+
 run = (query) ->
   LaunchBar.log "run: '#{query}'"
   Evernote.open()
@@ -85,6 +95,7 @@ runWithString = (query) ->
     [
       { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
       { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
+      { title: "Synchronize now", action: 'syncNow' },
       { title: "Edit Settings", path: SETTINGS_FILE }
     ]
 
@@ -115,6 +126,10 @@ createNote = () ->
   Evernote.createNote()
 
 
+syncNow = () ->
+  Evernote.syncNow()
+
+
 # Export for testing only, when not running in real LaunchBar context
 if not LaunchBar.systemVersion
   module.exports =
@@ -124,4 +139,5 @@ if not LaunchBar.systemVersion
     loadSettings: loadSettings
     openNote: openNote
     createNote: createNote
+    syncNow: syncNow
 

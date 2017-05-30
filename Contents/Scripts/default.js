@@ -1,4 +1,4 @@
-var Evernote, SETTINGS_FILE, createNote, loadSettings, openNote, run, runWithItem, runWithString, saved_searches;
+var Evernote, SETTINGS_FILE, createNote, loadSettings, openNote, run, runWithItem, runWithString, saved_searches, syncNow;
 
 SETTINGS_FILE = Action.path + "/Contents/Scripts/settings.js";
 
@@ -52,6 +52,11 @@ Evernote = (function() {
     return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to create note with text \" \"\n  open note window with theNote\n  activate\nend tell");
   };
 
+  Evernote.syncNow = function() {
+    LaunchBar.log("syncNow");
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  synchronize\nend tell");
+  };
+
   return Evernote;
 
 })();
@@ -77,6 +82,9 @@ runWithString = function(query) {
         title: "Create new Note",
         action: 'createNote',
         icon: 'com.evernote.Evernote'
+      }, {
+        title: "Synchronize now",
+        action: 'syncNow'
       }, {
         title: "Edit Settings",
         path: SETTINGS_FILE
@@ -112,6 +120,10 @@ createNote = function() {
   return Evernote.createNote();
 };
 
+syncNow = function() {
+  return Evernote.syncNow();
+};
+
 if (!LaunchBar.systemVersion) {
   module.exports = {
     Evernote: Evernote,
@@ -119,6 +131,7 @@ if (!LaunchBar.systemVersion) {
     runWithString: runWithString,
     loadSettings: loadSettings,
     openNote: openNote,
-    createNote: createNote
+    createNote: createNote,
+    syncNow: syncNow
   };
 }
