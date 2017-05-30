@@ -114,7 +114,16 @@ saved_searches = (argument) ->
 
 
 loadSettings = (settingsFile) ->
-  object = File.readJSON(settingsFile)
+  object = {}
+  try
+    object = File.readJSON(settingsFile)
+
+  if not object.debug
+    object.debug = false
+
+  if not object.saved_searches
+    object.saved_searches = []
+
   object
 
 

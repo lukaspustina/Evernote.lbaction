@@ -92,10 +92,50 @@ describe 'Evernote Launchbar Action', ->
 
     context "settings", ->
 
-      it 'load settings from file', ->
-        settings = lbaction.loadSettings lbaction.SETTINGS_FILE
-        expect(settings.saved_searches.length).to.eql 5
+      context "no settings file", ->
 
+        it 'load settings from file', ->
+          settings = lbaction.loadSettings "no such file"
+          settings.debug.should.be.eql false
+          settings.saved_searches.length.should.be.eql 0
+
+      context "full settings", ->
+
+        it 'load settings from file', ->
+          settings = lbaction.loadSettings lbaction.SETTINGS_FILE
+          settings.debug.should.be.eql true
+          settings.saved_searches.length.should.be.eql 5
+
+      context "settings w/o debug", ->
+
+        beforeEach ->
+          global.lbaction.SETTINGS_FILE = "#{__dirname}//test_settings_no_debug.js"
+
+        it 'load settings from file', ->
+          settings = lbaction.loadSettings lbaction.SETTINGS_FILE
+          settings.debug.should.be.eql false
+          settings.saved_searches.length.should.be.eql 5
+
+      context "settings w/o saved searches", ->
+
+        beforeEach ->
+          global.lbaction.SETTINGS_FILE = "#{__dirname}//test_settings_no_saved_searches.js"
+
+        it 'load settings from file', ->
+          settings = lbaction.loadSettings lbaction.SETTINGS_FILE
+          settings.debug.should.be.eql true
+          settings.saved_searches.length.should.be.eql 0
+
+
+    context "saved searches", ->
+
+      it "map saved search to menu item", ->
+        saved_searches = [ { name: 'A saved search', search: 'intitle:"A title"' } ]
+        items = lbaction.mapSavedSearch saved_searches
+        items[0].title.should.be.eql saved_searches[0].name
+        items[0].actionArgument.should.be.eql saved_searches[0].search
+        items[0].action.should.be.eql 'search'
+        items[0].actionReturnsItems.should.be.eql true
 
 
 class MockLaunchbar

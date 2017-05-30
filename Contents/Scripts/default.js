@@ -108,7 +108,16 @@ saved_searches = function(argument) {
 
 loadSettings = function(settingsFile) {
   var object;
-  object = File.readJSON(settingsFile);
+  object = {};
+  try {
+    object = File.readJSON(settingsFile);
+  } catch (error) {}
+  if (!object.debug) {
+    object.debug = false;
+  }
+  if (!object.saved_searches) {
+    object.saved_searches = [];
+  }
   return object;
 };
 
