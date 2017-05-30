@@ -23,12 +23,12 @@ on run {query, maxResults, debug}
 
 				set _title to (title of theNote)
 				try
-					tell me to set _title_enc to replaceText("'", "@@\\@@", _title) -- nasty way to escape '; cf. suggestions.js
+					tell me to set _title_enc to replaceText("'", "@@\\@@", _title) -- nasty way to escape '; cf. default.js
 
 					-- Debug
 					tell me to logger("found note with title  " & _title_enc, _debug)
 
-					tell me to set _label to replaceText("'", "@@\\@@", (name of (notebook of theNote))) -- nasty way to escape '; cf. suggestions.js
+					tell me to set _label to replaceText("'", "@@\\@@", (name of (notebook of theNote))) -- nasty way to escape '; cf. default.js
 					-- do shell script "logger '" & _label & "'"
 					set _date to ((modification date of theNote) as «class isot» as string)
 					set _subtitle to ((modification date of theNote) as string)
@@ -37,7 +37,8 @@ on run {query, maxResults, debug}
 					set _tagList to {}
 					set _noteTags to (tags of theNote)
 					repeat with x from 1 to length of _noteTags
-						copy (name of (item x of _noteTags)) to the end of _tagList
+            tell me to set _tag to replaceText("'", "@@\\@@", (name of (item x of _noteTags))) -- nasty way to escape '; cf. default.js
+						copy _tag to the end of _tagList
 					end repeat
 					set saveTID to AppleScript's text item delimiters
 					set AppleScript's text item delimiters to ", "
