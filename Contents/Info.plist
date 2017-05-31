@@ -5,11 +5,11 @@
 	<key>CFBundleIconFile</key>
 	<string>com.evernote.Evernote</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.pustina.LaunchBar.action.elukas</string>
+	<string>net.pustina.LaunchBar.action.evernote</string>
 	<key>CFBundleName</key>
-	<string>ELukas</string>
+	<string>Evernote</string>
 	<key>CFBundleVersion</key>
-	<string>0.1</string>
+	<string>0.2</string>
 	<key>LBAssociatedApplication</key>
 	<string>com.evernote.Evernote</string>
 	<key>LBDebugLogEnabled</key>
