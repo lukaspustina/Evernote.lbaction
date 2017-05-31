@@ -9,7 +9,7 @@ This Launchbar Action mitigates these short comings.
 
 1. Features
 
-    1. [x] Reduce saved searches to name as well as search and map to menu items
+    1. [X] Reduce saved searches to name as well as search and map to menu items
 
     1. Debug mode via settings
 
@@ -19,7 +19,7 @@ This Launchbar Action mitigates these short comings.
 
 1. Select Icons
 
-1. Change Info.plist back to '.Evernote'
+1. [X] Change Info.plist back to '.Evernote'
 
 1. Fix minifying
 
