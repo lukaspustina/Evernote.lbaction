@@ -41,8 +41,8 @@ mapSavedSearch = (saved_searches) ->
   items
 
 
-openNote = (note) ->
-  Evernote.openNote note
+handleNote= (note) ->
+  Evernote.handleNote note
 
 
 createNote = () ->
@@ -93,7 +93,7 @@ class Evernote
 
     # Postprocess: Add action
     for r in results
-      r.action = 'openNote'
+      r.action = 'handleNote'
 
     # Postprocess: Sort by modification date
     results.sort (a, b) ->
@@ -119,8 +119,13 @@ class Evernote
       []
 
 
-  @openNote: (note) ->
-    log "openNote: '#{JSON.stringify note}'"
+  @handleNote: (note) ->
+    log "@handleNote"
+    Evernote._open_note note
+
+
+  @_open_note: (note) ->
+    log "@_open_note: '#{JSON.stringify note}'"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
       tell application "Evernote"
@@ -161,7 +166,7 @@ if not LaunchBar.systemVersion
     runWithString: runWithString
     loadSettings: loadSettings
     mapSavedSearch: mapSavedSearch
-    openNote: openNote
+    handleNote: handleNote
     createNote: createNote
     syncNow: syncNow
 

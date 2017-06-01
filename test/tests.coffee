@@ -15,10 +15,11 @@ describe 'Evernote Launchbar Action', ->
     global.lbaction = rewire '../target/default.js'
 
     sinon.spy lbaction.Evernote, 'open'
-    sinon.spy lbaction.Evernote, 'openNote'
+    sinon.spy lbaction.Evernote, 'handleNote'
     sinon.spy lbaction.Evernote, 'createNote'
     sinon.spy lbaction.Evernote, 'search'
     sinon.spy lbaction.Evernote, 'syncNow'
+    sinon.stub(lbaction.Evernote, '_open_note')
     sinon.stub(lbaction.Evernote, '_evernote_search').returns [
         { title: "Result 1: " },
         { title: "Result 2: " },
@@ -26,14 +27,15 @@ describe 'Evernote Launchbar Action', ->
         { title: "Result 4: " }
       ]
 
-    global.lbaction.SETTINGS_FILE = "#{__dirname}//test_settings.js"
+    global.lbaction.SETTINGS_FILE = "#{__dirname}/test_settings.js"
 
   afterEach ->
     lbaction.Evernote._evernote_search.restore()
+    lbaction.Evernote._open_note.restore()
     lbaction.Evernote.syncNow.restore()
     lbaction.Evernote.search.restore()
     lbaction.Evernote.createNote.restore()
-    lbaction.Evernote.openNote.restore()
+    lbaction.Evernote.handleNote.restore()
     lbaction.Evernote.open.restore()
     delete global.lbaction
     delete global.File
@@ -63,15 +65,18 @@ describe 'Evernote Launchbar Action', ->
         results.should.all.have.property 'action'
 
 
-  context "openNote", ->
+  context "handleNote", ->
 
-    context "for selected search result", ->
+    context "open note", ->
 
-      it "open note window with selected note", ->
-        results = lbaction.runWithString "a search"
-        results.should.have.length 4
-        lbaction.openNote(results[2])
-        lbaction.Evernote.openNote.calledOnce.should.be.eql true
+      context "for selected search result", ->
+
+        it "open note window with selected note", ->
+          results = lbaction.runWithString "a search"
+          results.should.have.length 4
+          lbaction.handleNote(results[2])
+          lbaction.Evernote.handleNote.calledOnce.should.be.eql true
+          lbaction.Evernote._open_note.calledOnce.should.be.eql true
 
 
   context "createNote", ->

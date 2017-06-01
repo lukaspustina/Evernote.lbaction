@@ -13,9 +13,11 @@ This Launchbar Action mitigates these short comings.
 
     1. [X] Debug mode via settings
 
-    1. Cmd+Return: Open Search in Evernote main window
+    1. Cmd+Return: Copy note link to clipboard
 
 1. Refactoring
+
+    1. Apple Script result should have own format and mapped to items like saved_searches
 
 1. Select Icons
 
@@ -29,9 +31,9 @@ This Launchbar Action mitigates these short comings.
 
 1. Future work
 
-    1. Copy note link to clipboard
-
     1. Favorite notes via settings
+
+    1. Open Search in Evernote main window
 
 ## Features
 
