@@ -95,7 +95,7 @@ end replaceText
 on logger(_text, _debug)
 	try
 		if _debug is true then
-			do shell script "logger Evernote Launchbar Action " & _text
+			do shell script "logger 'Evernote Launchbar Action " & _text & "'"
 		end if
 	end try
 end logger
