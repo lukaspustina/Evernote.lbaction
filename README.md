@@ -11,7 +11,7 @@ This Launchbar Action mitigates these short comings.
 
     1. [X] Reduce saved searches to name as well as search and map to menu items
 
-    1. Debug mode via settings
+    1. [X] Debug mode via settings
 
     1. Cmd+Return: Open Search in Evernote main window
 
@@ -25,6 +25,13 @@ This Launchbar Action mitigates these short comings.
 
 1. Update Readme
 
+1. Release
+
+1. Future work
+
+    1. Copy note link to clipboard
+
+    1. Favorite notes via settings
 
 ## Features
 

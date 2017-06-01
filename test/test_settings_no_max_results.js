@@ -1,5 +1,5 @@
 {
-  "max_results": 30,
+  "debug": true,
   "saved_searches": [
     { "name": "Saved Search 1", "search": "intitle:\"A Title Search\"" },
     { "name": "Saved Search 2", "search": "search" },

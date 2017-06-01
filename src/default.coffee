@@ -1,5 +1,81 @@
+# Launchbar Evernote Action
+
+## Public
+
+loadSettings = (settingsFile) ->
+  object = try
+    File.readJSON(settingsFile)
+  catch
+    {}
+
+  if not object.debug
+    object.debug = false
+
+  if not object.saved_searches
+    object.saved_searches = []
+
+  if not object.max_results
+    object.max_results = 20
+
+  object
+
 
 SETTINGS_FILE = "#{Action.path}/Contents/Scripts/settings.js"
+SETTINGS = loadSettings(SETTINGS_FILE)
+
+
+log = (msg) ->
+  if SETTINGS.debug
+    LaunchBar.log msg
+
+
+saved_searches = (argument) ->
+  log("saved_searches")
+  log(JSON.stringify(arguments))
+
+  mapSavedSearch(SETTINGS.saved_searches)
+
+
+mapSavedSearch = (saved_searches) ->
+  items = ( {title: ss.name, actionArgument: ss.search, action: 'runWithString', actionReturnsItems: true }for ss in saved_searches)
+  items
+
+
+openNote = (note) ->
+  Evernote.openNote note
+
+
+createNote = () ->
+  Evernote.createNote()
+
+
+syncNow = () ->
+  Evernote.syncNow()
+
+
+run = (query) ->
+  log "run: '#{query}'"
+  Evernote.open()
+  log "run: '#{query}' done."
+
+
+runWithString = (query) ->
+  log "runWithString: '#{query}'"
+  log JSON.stringify(query)
+  #createNewNote = LaunchBar.options.shiftKey ? 1 : 0
+
+  if query.length > 0
+    Evernote.search query, SETTINGS.max_results, SETTINGS.debug
+  else
+    [
+      { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
+      { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
+      { title: "Synchronize now", action: 'syncNow' },
+      { title: "Edit Settings", path: SETTINGS_FILE }
+    ]
+
+
+## Private
 
 class Evernote
   @open: ->
@@ -11,8 +87,9 @@ class Evernote
       end tell
     """
 
-  @search = (query) ->
-    results = Evernote._evernote_search query, 20, true
+
+  @search: (query, maxResults, debug) ->
+    results = Evernote._evernote_search query, maxResults, debug
 
     # Postprocess: Add action
     for r in results
@@ -28,7 +105,7 @@ class Evernote
         -1
       0
 
-    LaunchBar.log "search result: '#{JSON.stringify results}'"
+    log "search result: '#{JSON.stringify results}'"
     results
 
 
@@ -43,7 +120,7 @@ class Evernote
 
 
   @openNote: (note) ->
-    LaunchBar.log "openNote: '#{JSON.stringify note}'"
+    log "openNote: '#{JSON.stringify note}'"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
       tell application "Evernote"
@@ -55,7 +132,7 @@ class Evernote
 
 
   @createNote: () ->
-    LaunchBar.log "createNote"
+    log "createNote"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
       tell application "Evernote"
@@ -67,81 +144,13 @@ class Evernote
 
 
   @syncNow: () ->
-    LaunchBar.log "syncNow"
+    log "syncNow"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
       tell application "Evernote"
         synchronize
       end tell
     """
-
-
-run = (query) ->
-  LaunchBar.log "run: '#{query}'"
-  Evernote.open()
-  LaunchBar.log "run: '#{query}' done."
-
-
-runWithString = (query) ->
-  LaunchBar.log "runWithString: '#{query}'"
-  LaunchBar.log JSON.stringify(query)
-  #createNewNote = LaunchBar.options.shiftKey ? 1 : 0
-
-  #LaunchBar.executeAppleScriptFile('openNote.applescript', query, createNewNote)
-
-  if query.length > 0
-    Evernote.search query
-  else
-    [
-      { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
-      { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
-      { title: "Synchronize now", action: 'syncNow' },
-      { title: "Edit Settings", path: SETTINGS_FILE }
-    ]
-
-
-runWithItem = (item) ->
-  LaunchBar.log("runWithItem")
-  LaunchBar.log(JSON.stringify(item))
-
-
-saved_searches = (argument) ->
-  LaunchBar.log("saved_searches")
-  LaunchBar.log(JSON.stringify(arguments))
-  settings = loadSettings(SETTINGS_FILE)
-
-  mapSavedSearch(settings.saved_searches)
-
-
-loadSettings = (settingsFile) ->
-  object = try
-    File.readJSON(settingsFile)
-  catch
-    {}
-
-  if not object.debug
-    object.debug = false
-
-  if not object.saved_searches
-    object.saved_searches = []
-
-  object
-
-
-mapSavedSearch = (saved_searches) ->
-  items = ( {title: ss.name, actionArgument: ss.search, action: 'runWithString', actionReturnsItems: true }for ss in saved_searches)
-  items
-
-openNote = (note) ->
-  Evernote.openNote note
-
-
-createNote = () ->
-  Evernote.createNote()
-
-
-syncNow = () ->
-  Evernote.syncNow()
 
 
 # Export for testing only, when not running in real LaunchBar context

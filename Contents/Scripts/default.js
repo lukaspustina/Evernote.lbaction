@@ -1,110 +1,4 @@
-var Evernote, SETTINGS_FILE, createNote, loadSettings, mapSavedSearch, openNote, run, runWithItem, runWithString, saved_searches, syncNow;
-
-SETTINGS_FILE = Action.path + "/Contents/Scripts/settings.js";
-
-Evernote = (function() {
-  function Evernote() {}
-
-  Evernote.open = function() {
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  open collection window\n  activate\nend tell");
-  };
-
-  Evernote.search = function(query) {
-    var i, len, r, results;
-    results = Evernote._evernote_search(query, 20, true);
-    for (i = 0, len = results.length; i < len; i++) {
-      r = results[i];
-      r.action = 'openNote';
-    }
-    results.sort(function(a, b) {
-      var left, right;
-      left = new Date(a.date);
-      right = new Date(b.date);
-      if (left < right) {
-        1;
-      }
-      if (left > right) {
-        -1;
-      }
-      return 0;
-    });
-    LaunchBar.log("search result: '" + (JSON.stringify(results)) + "'");
-    return results;
-  };
-
-  Evernote._evernote_search = function(query, maxResults, debug) {
-    var notes;
-    notes = LaunchBar.executeAppleScriptFile(Action.path + "/Contents/Scripts/findNotes.applescript", query, maxResults, debug).replace(/@@\\@@/g, "\\'");
-    if (notes.length > 0) {
-      return eval(notes);
-    } else {
-      return [];
-    }
-  };
-
-  Evernote.openNote = function(note) {
-    LaunchBar.log("openNote: '" + (JSON.stringify(note)) + "'");
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to find note \"" + note.notelink + "\"\n  open note window with theNote\n  activate\nend tell");
-  };
-
-  Evernote.createNote = function() {
-    LaunchBar.log("createNote");
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to create note with text \" \"\n  open note window with theNote\n  activate\nend tell");
-  };
-
-  Evernote.syncNow = function() {
-    LaunchBar.log("syncNow");
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  synchronize\nend tell");
-  };
-
-  return Evernote;
-
-})();
-
-run = function(query) {
-  LaunchBar.log("run: '" + query + "'");
-  Evernote.open();
-  return LaunchBar.log("run: '" + query + "' done.");
-};
-
-runWithString = function(query) {
-  LaunchBar.log("runWithString: '" + query + "'");
-  LaunchBar.log(JSON.stringify(query));
-  if (query.length > 0) {
-    return Evernote.search(query);
-  } else {
-    return [
-      {
-        title: "Saved Searches",
-        action: 'saved_searches',
-        actionReturnsItems: true
-      }, {
-        title: "Create new Note",
-        action: 'createNote',
-        icon: 'com.evernote.Evernote'
-      }, {
-        title: "Synchronize now",
-        action: 'syncNow'
-      }, {
-        title: "Edit Settings",
-        path: SETTINGS_FILE
-      }
-    ];
-  }
-};
-
-runWithItem = function(item) {
-  LaunchBar.log("runWithItem");
-  return LaunchBar.log(JSON.stringify(item));
-};
-
-saved_searches = function(argument) {
-  var settings;
-  LaunchBar.log("saved_searches");
-  LaunchBar.log(JSON.stringify(arguments));
-  settings = loadSettings(SETTINGS_FILE);
-  return mapSavedSearch(settings.saved_searches);
-};
+var Evernote, SETTINGS, SETTINGS_FILE, createNote, loadSettings, log, mapSavedSearch, openNote, run, runWithString, saved_searches, syncNow;
 
 loadSettings = function(settingsFile) {
   var object;
@@ -121,7 +15,26 @@ loadSettings = function(settingsFile) {
   if (!object.saved_searches) {
     object.saved_searches = [];
   }
+  if (!object.max_results) {
+    object.max_results = 20;
+  }
   return object;
+};
+
+SETTINGS_FILE = Action.path + "/Contents/Scripts/settings.js";
+
+SETTINGS = loadSettings(SETTINGS_FILE);
+
+log = function(msg) {
+  if (SETTINGS.debug) {
+    return LaunchBar.log(msg);
+  }
+};
+
+saved_searches = function(argument) {
+  log("saved_searches");
+  log(JSON.stringify(arguments));
+  return mapSavedSearch(SETTINGS.saved_searches);
 };
 
 mapSavedSearch = function(saved_searches) {
@@ -154,6 +67,97 @@ createNote = function() {
 syncNow = function() {
   return Evernote.syncNow();
 };
+
+run = function(query) {
+  log("run: '" + query + "'");
+  Evernote.open();
+  return log("run: '" + query + "' done.");
+};
+
+runWithString = function(query) {
+  log("runWithString: '" + query + "'");
+  log(JSON.stringify(query));
+  if (query.length > 0) {
+    return Evernote.search(query, SETTINGS.max_results, SETTINGS.debug);
+  } else {
+    return [
+      {
+        title: "Saved Searches",
+        action: 'saved_searches',
+        actionReturnsItems: true
+      }, {
+        title: "Create new Note",
+        action: 'createNote',
+        icon: 'com.evernote.Evernote'
+      }, {
+        title: "Synchronize now",
+        action: 'syncNow'
+      }, {
+        title: "Edit Settings",
+        path: SETTINGS_FILE
+      }
+    ];
+  }
+};
+
+Evernote = (function() {
+  function Evernote() {}
+
+  Evernote.open = function() {
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  open collection window\n  activate\nend tell");
+  };
+
+  Evernote.search = function(query, maxResults, debug) {
+    var i, len, r, results;
+    results = Evernote._evernote_search(query, maxResults, debug);
+    for (i = 0, len = results.length; i < len; i++) {
+      r = results[i];
+      r.action = 'openNote';
+    }
+    results.sort(function(a, b) {
+      var left, right;
+      left = new Date(a.date);
+      right = new Date(b.date);
+      if (left < right) {
+        1;
+      }
+      if (left > right) {
+        -1;
+      }
+      return 0;
+    });
+    log("search result: '" + (JSON.stringify(results)) + "'");
+    return results;
+  };
+
+  Evernote._evernote_search = function(query, maxResults, debug) {
+    var notes;
+    notes = LaunchBar.executeAppleScriptFile(Action.path + "/Contents/Scripts/findNotes.applescript", query, maxResults, debug).replace(/@@\\@@/g, "\\'");
+    if (notes.length > 0) {
+      return eval(notes);
+    } else {
+      return [];
+    }
+  };
+
+  Evernote.openNote = function(note) {
+    log("openNote: '" + (JSON.stringify(note)) + "'");
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to find note \"" + note.notelink + "\"\n  open note window with theNote\n  activate\nend tell");
+  };
+
+  Evernote.createNote = function() {
+    log("createNote");
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to create note with text \" \"\n  open note window with theNote\n  activate\nend tell");
+  };
+
+  Evernote.syncNow = function() {
+    log("syncNow");
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  synchronize\nend tell");
+  };
+
+  return Evernote;
+
+})();
 
 if (!LaunchBar.systemVersion) {
   module.exports = {
