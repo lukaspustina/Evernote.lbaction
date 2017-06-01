@@ -20,6 +20,7 @@ describe 'Evernote Launchbar Action', ->
     sinon.spy lbaction.Evernote, 'search'
     sinon.spy lbaction.Evernote, 'syncNow'
     sinon.stub(lbaction.Evernote, '_open_note')
+    sinon.stub(lbaction.Evernote, '_copy_note_link')
     sinon.stub(lbaction.Evernote, '_evernote_search').returns [
         { title: "Result 1: " },
         { title: "Result 2: " },
@@ -31,6 +32,7 @@ describe 'Evernote Launchbar Action', ->
 
   afterEach ->
     lbaction.Evernote._evernote_search.restore()
+    lbaction.Evernote._copy_note_link.restore()
     lbaction.Evernote._open_note.restore()
     lbaction.Evernote.syncNow.restore()
     lbaction.Evernote.search.restore()
@@ -77,6 +79,24 @@ describe 'Evernote Launchbar Action', ->
           lbaction.handleNote(results[2])
           lbaction.Evernote.handleNote.calledOnce.should.be.eql true
           lbaction.Evernote._open_note.calledOnce.should.be.eql true
+
+    context "copy note link", ->
+
+      context "for selected search result", ->
+
+        beforeEach ->
+          global.LaunchBar.options =
+            commandKey: true
+
+        afterEach ->
+          global.LaunchBar.options = {}
+
+        it "copy note link of selected note", ->
+          results = lbaction.runWithString "a search"
+          results.should.have.length 4
+          lbaction.handleNote(results[2])
+          lbaction.Evernote.handleNote.calledOnce.should.be.eql true
+          lbaction.Evernote._copy_note_link.calledOnce.should.be.eql true
 
 
   context "createNote", ->
@@ -162,6 +182,8 @@ describe 'Evernote Launchbar Action', ->
 
 
 class MockLaunchbar
+
+  options: {}
 
   log: (msg) ->
 

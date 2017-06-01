@@ -13,7 +13,7 @@ This Launchbar Action mitigates these short comings.
 
     1. [X] Debug mode via settings
 
-    1. Cmd+Return: Copy note link to clipboard
+    1. [X] Cmd+Return: Copy note link to clipboard
 
 1. Refactoring
 

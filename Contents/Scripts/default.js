@@ -142,12 +142,22 @@ Evernote = (function() {
 
   Evernote.handleNote = function(note) {
     log("@handleNote");
-    return Evernote._open_note(note);
+    if (LaunchBar.options.commandKey) {
+      return Evernote._copy_note_link(note);
+    } else {
+      return Evernote._open_note(note);
+    }
   };
 
   Evernote._open_note = function(note) {
     log("@_open_note: '" + (JSON.stringify(note)) + "'");
     return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to find note \"" + note.notelink + "\"\n  open note window with theNote\n  activate\nend tell");
+  };
+
+  Evernote._copy_note_link = function(note) {
+    log("@_copy_note_link: '" + (JSON.stringify(note)) + "'");
+    LaunchBar.paste(note.notelink);
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide");
   };
 
   Evernote.createNote = function() {

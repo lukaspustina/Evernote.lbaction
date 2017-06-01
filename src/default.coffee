@@ -62,7 +62,6 @@ run = (query) ->
 runWithString = (query) ->
   log "runWithString: '#{query}'"
   log JSON.stringify(query)
-  #createNewNote = LaunchBar.options.shiftKey ? 1 : 0
 
   if query.length > 0
     Evernote.search query, SETTINGS.max_results, SETTINGS.debug
@@ -121,7 +120,10 @@ class Evernote
 
   @handleNote: (note) ->
     log "@handleNote"
-    Evernote._open_note note
+    if LaunchBar.options.commandKey
+      Evernote._copy_note_link note
+    else
+      Evernote._open_note note
 
 
   @_open_note: (note) ->
@@ -133,6 +135,14 @@ class Evernote
         open note window with theNote
         activate
       end tell
+    """
+
+
+  @_copy_note_link: (note) ->
+    log "@_copy_note_link: '#{JSON.stringify note}'"
+    LaunchBar.paste note.notelink
+    LaunchBar.executeAppleScript """
+      tell application "LaunchBar" to hide
     """
 
 
