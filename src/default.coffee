@@ -78,6 +78,7 @@ runWithString = (query) ->
 
 class Evernote
   @open: ->
+    log "@open"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
       tell application "Evernote"
@@ -85,9 +86,11 @@ class Evernote
         activate
       end tell
     """
+    log "@open: done"
 
 
   @search: (query, maxResults, debug) ->
+    log "@search: '#{query}, #{maxResults}, #{debug}'"
     results = Evernote._evernote_search query, maxResults, debug
 
     # Postprocess: Add action
@@ -105,6 +108,7 @@ class Evernote
       0
 
     log "search result: '#{JSON.stringify results}'"
+    log "@search: done"
     results
 
 
@@ -124,6 +128,7 @@ class Evernote
       Evernote._copy_note_link note
     else
       Evernote._open_note note
+    log "@handleNote: done"
 
 
   @_open_note: (note) ->
@@ -136,6 +141,7 @@ class Evernote
         activate
       end tell
     """
+    log "@_open_note: done"
 
 
   @_copy_note_link: (note) ->
@@ -144,6 +150,7 @@ class Evernote
       tell application "LaunchBar" to hide
       set the clipboard to "#{note.notelink}"
     """
+    log "@_copy_note_link: done"
 
 
   @createNote: () ->
@@ -156,6 +163,7 @@ class Evernote
         activate
       end tell
     """
+    log "createNote: done"
 
 
   @syncNow: () ->
@@ -166,6 +174,7 @@ class Evernote
         synchronize
       end tell
     """
+    log "syncNow: done"
 
 
 # Export for testing only, when not running in real LaunchBar context

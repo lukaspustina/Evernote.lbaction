@@ -104,11 +104,14 @@ Evernote = (function() {
   function Evernote() {}
 
   Evernote.open = function() {
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  open collection window\n  activate\nend tell");
+    log("@open");
+    LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  open collection window\n  activate\nend tell");
+    return log("@open: done");
   };
 
   Evernote.search = function(query, maxResults, debug) {
     var i, len, r, results;
+    log("@search: '" + query + ", " + maxResults + ", " + debug + "'");
     results = Evernote._evernote_search(query, maxResults, debug);
     for (i = 0, len = results.length; i < len; i++) {
       r = results[i];
@@ -127,6 +130,7 @@ Evernote = (function() {
       return 0;
     });
     log("search result: '" + (JSON.stringify(results)) + "'");
+    log("@search: done");
     return results;
   };
 
@@ -143,30 +147,35 @@ Evernote = (function() {
   Evernote.handleNote = function(note) {
     log("@handleNote");
     if (LaunchBar.options.commandKey) {
-      return Evernote._copy_note_link(note);
+      Evernote._copy_note_link(note);
     } else {
-      return Evernote._open_note(note);
+      Evernote._open_note(note);
     }
+    return log("@handleNote: done");
   };
 
   Evernote._open_note = function(note) {
     log("@_open_note: '" + (JSON.stringify(note)) + "'");
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to find note \"" + note.notelink + "\"\n  open note window with theNote\n  activate\nend tell");
+    LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to find note \"" + note.notelink + "\"\n  open note window with theNote\n  activate\nend tell");
+    return log("@_open_note: done");
   };
 
   Evernote._copy_note_link = function(note) {
     log("@_copy_note_link: '" + (JSON.stringify(note)) + "'");
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\nset the clipboard to \"" + note.notelink + "\"");
+    LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\nset the clipboard to \"" + note.notelink + "\"");
+    return log("@_copy_note_link: done");
   };
 
   Evernote.createNote = function() {
     log("createNote");
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to create note with text \" \"\n  open note window with theNote\n  activate\nend tell");
+    LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  set theNote to create note with text \" \"\n  open note window with theNote\n  activate\nend tell");
+    return log("createNote: done");
   };
 
   Evernote.syncNow = function() {
     log("syncNow");
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  synchronize\nend tell");
+    LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\ntell application \"Evernote\"\n  synchronize\nend tell");
+    return log("syncNow: done");
   };
 
   return Evernote;
