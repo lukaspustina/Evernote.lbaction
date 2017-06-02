@@ -156,8 +156,7 @@ Evernote = (function() {
 
   Evernote._copy_note_link = function(note) {
     log("@_copy_note_link: '" + (JSON.stringify(note)) + "'");
-    LaunchBar.paste(note.notelink);
-    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide");
+    return LaunchBar.executeAppleScript("tell application \"LaunchBar\" to hide\nset the clipboard to \"" + note.notelink + "\"");
   };
 
   Evernote.createNote = function() {

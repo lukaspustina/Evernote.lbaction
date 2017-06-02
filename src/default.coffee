@@ -140,9 +140,9 @@ class Evernote
 
   @_copy_note_link: (note) ->
     log "@_copy_note_link: '#{JSON.stringify note}'"
-    LaunchBar.paste note.notelink
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
+      set the clipboard to "#{note.notelink}"
     """
 
 
