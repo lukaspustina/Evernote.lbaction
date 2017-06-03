@@ -58,6 +58,13 @@ describe 'Evernote Launchbar Action', ->
         menu = lbaction.runWithString ""
         expect(menu.length).to.eql 4
 
+    context "for query string smaller than query_min_len", ->
+
+      it 'do not search', ->
+        lbaction.runWithString "a"
+        lbaction.runWithString "aa"
+        expect(lbaction.Evernote.search.calledOnce).to.eql false
+
     context "for query String", ->
 
       it 'show search results', ->
@@ -140,6 +147,7 @@ describe 'Evernote Launchbar Action', ->
           settings = lbaction.loadSettings lbaction.SETTINGS_FILE
           settings.debug.should.be.eql true
           settings.max_results.should.be.eql 30
+          settings.query_min_len.should.be.eql 3
           settings.saved_searches.length.should.be.eql 5
 
       context "settings w/o debug", ->

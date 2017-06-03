@@ -15,9 +15,13 @@ This Launchbar Action mitigates these short comings.
 
     1. [X] Cmd+Return: Copy note link to clipboard
 
+    1. [X] Start search only for queries with len > query_min_len
+
 1. Refactoring
 
     1. Apple Script result should have own format and mapped to items like saved_searches
+
+    1. Only two settings tests: full and default
 
 1. Select Icons
 

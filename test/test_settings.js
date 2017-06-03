@@ -1,6 +1,7 @@
 {
   "debug": true,
   "max_results": 30,
+  "query_min_len": 3,
   "saved_searches": [
     { "name": "Saved Search 1", "search": "intitle:\"A Title Search\"" },
     { "name": "Saved Search 2", "search": "search" },

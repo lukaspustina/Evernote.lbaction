@@ -18,6 +18,9 @@ loadSettings = function(settingsFile) {
   if (!object.max_results) {
     object.max_results = 20;
   }
+  if (!object.query_min_len) {
+    object.query_min_len = 3;
+  }
   return object;
 };
 
@@ -77,7 +80,7 @@ run = function(query) {
 runWithString = function(query) {
   log("runWithString: '" + query + "'");
   log(JSON.stringify(query));
-  if (query.length > 0) {
+  if (query.length >= SETTINGS.query_min_len) {
     return Evernote.search(query, SETTINGS.max_results, SETTINGS.debug);
   } else {
     return [

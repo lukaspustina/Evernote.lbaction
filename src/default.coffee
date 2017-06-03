@@ -10,12 +10,12 @@ loadSettings = (settingsFile) ->
 
   if not object.debug
     object.debug = false
-
   if not object.saved_searches
     object.saved_searches = []
-
   if not object.max_results
     object.max_results = 20
+  if not object.query_min_len
+    object.query_min_len = 3
 
   object
 
@@ -63,7 +63,7 @@ runWithString = (query) ->
   log "runWithString: '#{query}'"
   log JSON.stringify(query)
 
-  if query.length > 0
+  if query.length >= SETTINGS.query_min_len
     Evernote.search query, SETTINGS.max_results, SETTINGS.debug
   else
     [
