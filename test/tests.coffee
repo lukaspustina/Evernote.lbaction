@@ -139,6 +139,20 @@ describe 'Evernote Launchbar Action', ->
         it 'load settings from file', ->
           settings = lbaction.loadSettings "no such file"
           settings.debug.should.be.eql false
+          settings.max_results.should.be.eql 20
+          settings.query_min_len.should.be.eql 3
+          settings.saved_searches.length.should.be.eql 0
+
+      context "empty settings", ->
+
+        beforeEach ->
+          global.lbaction.SETTINGS_FILE = "#{__dirname}/test_settings_empty.js"
+
+        it 'load settings from file', ->
+          settings = lbaction.loadSettings lbaction.SETTINGS_FILE
+          settings.debug.should.be.eql false
+          settings.max_results.should.be.eql 20
+          settings.query_min_len.should.be.eql 3
           settings.saved_searches.length.should.be.eql 0
 
       context "full settings", ->
@@ -149,34 +163,6 @@ describe 'Evernote Launchbar Action', ->
           settings.max_results.should.be.eql 30
           settings.query_min_len.should.be.eql 3
           settings.saved_searches.length.should.be.eql 5
-
-      context "settings w/o debug", ->
-
-        beforeEach ->
-          global.lbaction.SETTINGS_FILE = "#{__dirname}/test_settings_no_debug.js"
-
-        it 'load settings from file', ->
-          settings = lbaction.loadSettings lbaction.SETTINGS_FILE
-          settings.debug.should.be.eql false
-
-      context "settings w/o saved searches", ->
-
-        beforeEach ->
-          global.lbaction.SETTINGS_FILE = "#{__dirname}/test_settings_no_saved_searches.js"
-
-        it 'load settings from file', ->
-          settings = lbaction.loadSettings lbaction.SETTINGS_FILE
-          settings.saved_searches.length.should.be.eql 0
-
-      context "settings w/o max results", ->
-
-        beforeEach ->
-          global.lbaction.SETTINGS_FILE = "#{__dirname}/test_settings_no_max_results.js"
-
-        it 'load settings from file', ->
-          settings = lbaction.loadSettings lbaction.SETTINGS_FILE
-          settings.max_results.should.be.eql 20
-
 
     context "saved searches", ->
 

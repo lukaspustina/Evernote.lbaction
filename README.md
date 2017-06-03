@@ -21,7 +21,7 @@ This Launchbar Action mitigates these short comings.
 
     1. Apple Script result should have own format and mapped to items like saved_searches
 
-    1. Only two settings tests: full and default
+    1. [X] Only two settings tests: full and default
 
 1. Select Icons
 
