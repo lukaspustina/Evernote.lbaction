@@ -1,37 +1,53 @@
-var Evernote, SETTINGS, SETTINGS_FILE, createNote, handleNote, loadSettings, log, mapSavedSearch, mapSearchResults, run, runWithString, saved_searches, syncNow;
+var Evernote, SETTINGS, SETTINGS_FILE, createNote, handleNote, init, loadSettings, log, mapSavedSearch, mapSearchResults, run, runWithString, saved_searches, syncNow;
 
-loadSettings = function(settingsFile) {
-  var object;
-  object = (function() {
-    try {
-      return File.readJSON(settingsFile);
-    } catch (error) {
-      return {};
-    }
-  })();
-  if (!object.debug) {
-    object.debug = false;
-  }
-  if (!object.saved_searches) {
-    object.saved_searches = [];
-  }
-  if (!object.max_results) {
-    object.max_results = 20;
-  }
-  if (!object.query_min_len) {
-    object.query_min_len = 3;
-  }
-  return object;
+SETTINGS_FILE = "";
+
+SETTINGS = [];
+
+run = function(query) {
+  log("run: '" + query + "'");
+  Evernote.open();
+  return log("run: '" + query + "' done.");
 };
 
-SETTINGS_FILE = Action.path + "/Contents/Scripts/settings.js";
-
-SETTINGS = loadSettings(SETTINGS_FILE);
-
-log = function(msg) {
-  if (SETTINGS.debug) {
-    return LaunchBar.log(msg);
+runWithString = function(query) {
+  var search_results;
+  log("runWithString: '" + query + "'");
+  log(JSON.stringify(query));
+  if (query.length >= SETTINGS.query_min_len) {
+    search_results = Evernote.search(query, SETTINGS.max_results, SETTINGS.debug);
+    return mapSearchResults(search_results);
+  } else {
+    return [
+      {
+        title: "Saved Searches",
+        action: 'saved_searches',
+        actionReturnsItems: true
+      }, {
+        title: "Create new Note",
+        action: 'createNote',
+        icon: 'com.evernote.Evernote'
+      }, {
+        title: "Synchronize now",
+        action: 'syncNow'
+      }, {
+        title: "Edit Settings",
+        path: SETTINGS_FILE
+      }
+    ];
   }
+};
+
+handleNote = function(note) {
+  return Evernote.handleNote(note);
+};
+
+createNote = function() {
+  return Evernote.createNote();
+};
+
+syncNow = function() {
+  return Evernote.syncNow();
 };
 
 saved_searches = function(argument) {
@@ -95,49 +111,33 @@ mapSearchResults = function(search_results) {
   return results;
 };
 
-handleNote = function(note) {
-  return Evernote.handleNote(note);
+loadSettings = function(settingsFile) {
+  var object;
+  object = (function() {
+    try {
+      return File.readJSON(settingsFile);
+    } catch (error) {
+      return {};
+    }
+  })();
+  if (!object.debug) {
+    object.debug = false;
+  }
+  if (!object.saved_searches) {
+    object.saved_searches = [];
+  }
+  if (!object.max_results) {
+    object.max_results = 20;
+  }
+  if (!object.query_min_len) {
+    object.query_min_len = 3;
+  }
+  return object;
 };
 
-createNote = function() {
-  return Evernote.createNote();
-};
-
-syncNow = function() {
-  return Evernote.syncNow();
-};
-
-run = function(query) {
-  log("run: '" + query + "'");
-  Evernote.open();
-  return log("run: '" + query + "' done.");
-};
-
-runWithString = function(query) {
-  var search_results;
-  log("runWithString: '" + query + "'");
-  log(JSON.stringify(query));
-  if (query.length >= SETTINGS.query_min_len) {
-    search_results = Evernote.search(query, SETTINGS.max_results, SETTINGS.debug);
-    return mapSearchResults(search_results);
-  } else {
-    return [
-      {
-        title: "Saved Searches",
-        action: 'saved_searches',
-        actionReturnsItems: true
-      }, {
-        title: "Create new Note",
-        action: 'createNote',
-        icon: 'com.evernote.Evernote'
-      }, {
-        title: "Synchronize now",
-        action: 'syncNow'
-      }, {
-        title: "Edit Settings",
-        path: SETTINGS_FILE
-      }
-    ];
+log = function(msg) {
+  if (SETTINGS.debug) {
+    return LaunchBar.log(msg);
   }
 };
 
@@ -207,16 +207,23 @@ Evernote = (function() {
 
 })();
 
-if (!LaunchBar.systemVersion) {
-  module.exports = {
-    Evernote: Evernote,
-    run: run,
-    runWithString: runWithString,
-    loadSettings: loadSettings,
-    mapSavedSearch: mapSavedSearch,
-    mapSearchResults: mapSearchResults,
-    handleNote: handleNote,
-    createNote: createNote,
-    syncNow: syncNow
-  };
-}
+init = function() {
+  if (LaunchBar && LaunchBar.systemVersion) {
+    SETTINGS_FILE = Action.path + "/Contents/Scripts/settings.js";
+  } else {
+    module.exports = {
+      Evernote: Evernote,
+      run: run,
+      runWithString: runWithString,
+      loadSettings: loadSettings,
+      mapSavedSearch: mapSavedSearch,
+      mapSearchResults: mapSearchResults,
+      handleNote: handleNote,
+      createNote: createNote,
+      syncNow: syncNow
+    };
+  }
+  return SETTINGS = loadSettings(SETTINGS_FILE);
+};
+
+init();

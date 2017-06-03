@@ -2,31 +2,43 @@
 
 ## Public
 
-loadSettings = (settingsFile) ->
-  object = try
-    File.readJSON(settingsFile)
-  catch
-    {}
+SETTINGS_FILE = ""
+SETTINGS = []
 
-  if not object.debug
-    object.debug = false
-  if not object.saved_searches
-    object.saved_searches = []
-  if not object.max_results
-    object.max_results = 20
-  if not object.query_min_len
-    object.query_min_len = 3
-
-  object
+run = (query) ->
+  log "run: '#{query}'"
+  Evernote.open()
+  log "run: '#{query}' done."
 
 
-SETTINGS_FILE = "#{Action.path}/Contents/Scripts/settings.js"
-SETTINGS = loadSettings(SETTINGS_FILE)
+runWithString = (query) ->
+  log "runWithString: '#{query}'"
+  log JSON.stringify(query)
+
+  if query.length >= SETTINGS.query_min_len
+    search_results = Evernote.search query, SETTINGS.max_results, SETTINGS.debug
+    mapSearchResults search_results
+  else
+    [
+      { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
+      { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
+      { title: "Synchronize now", action: 'syncNow' },
+      { title: "Edit Settings", path: SETTINGS_FILE }
+    ]
 
 
-log = (msg) ->
-  if SETTINGS.debug
-    LaunchBar.log msg
+## Private
+
+handleNote = (note) ->
+  Evernote.handleNote note
+
+
+createNote = () ->
+  Evernote.createNote()
+
+
+syncNow = () ->
+  Evernote.syncNow()
 
 
 saved_searches = (argument) ->
@@ -79,41 +91,28 @@ mapSearchResults = (search_results) ->
   results
 
 
-handleNote= (note) ->
-  Evernote.handleNote note
+loadSettings = (settingsFile) ->
+  object = try
+    File.readJSON(settingsFile)
+  catch
+    {}
+
+  if not object.debug
+    object.debug = false
+  if not object.saved_searches
+    object.saved_searches = []
+  if not object.max_results
+    object.max_results = 20
+  if not object.query_min_len
+    object.query_min_len = 3
+
+  object
 
 
-createNote = () ->
-  Evernote.createNote()
+log = (msg) ->
+  if SETTINGS.debug
+    LaunchBar.log msg
 
-
-syncNow = () ->
-  Evernote.syncNow()
-
-
-run = (query) ->
-  log "run: '#{query}'"
-  Evernote.open()
-  log "run: '#{query}' done."
-
-
-runWithString = (query) ->
-  log "runWithString: '#{query}'"
-  log JSON.stringify(query)
-
-  if query.length >= SETTINGS.query_min_len
-    search_results = Evernote.search query, SETTINGS.max_results, SETTINGS.debug
-    mapSearchResults search_results
-  else
-    [
-      { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
-      { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
-      { title: "Synchronize now", action: 'syncNow' },
-      { title: "Edit Settings", path: SETTINGS_FILE }
-    ]
-
-
-## Private
 
 class Evernote
   @open: ->
@@ -131,9 +130,6 @@ class Evernote
   @search: (query, maxResults, debug) ->
     log "@search: '#{query}, #{maxResults}, #{debug}'"
     results = Evernote._evernote_search query, maxResults, debug
-
-
-
     log "search result: '#{JSON.stringify results}'"
     log "@search: done"
     results
@@ -204,16 +200,22 @@ class Evernote
     log "syncNow: done"
 
 
-# Export for testing only, when not running in real LaunchBar context
-if not LaunchBar.systemVersion
-  module.exports =
-    Evernote: Evernote
-    run: run
-    runWithString: runWithString
-    loadSettings: loadSettings
-    mapSavedSearch: mapSavedSearch
-    mapSearchResults: mapSearchResults
-    handleNote: handleNote
-    createNote: createNote
-    syncNow: syncNow
+init = () ->
+  if LaunchBar && LaunchBar.systemVersion
+    SETTINGS_FILE = "#{Action.path}/Contents/Scripts/settings.js"
+  else
+    module.exports =
+      Evernote: Evernote
+      run: run
+      runWithString: runWithString
+      loadSettings: loadSettings
+      mapSavedSearch: mapSavedSearch
+      mapSearchResults: mapSearchResults
+      handleNote: handleNote
+      createNote: createNote
+      syncNow: syncNow
+
+  SETTINGS = loadSettings(SETTINGS_FILE)
+
+init()
 
