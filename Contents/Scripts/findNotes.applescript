@@ -28,10 +28,10 @@ on run {query, maxResults, debug}
 					-- Debug
 					tell me to logger("found note with title  " & _title_enc, _debug)
 
-					tell me to set _label to replaceText("'", "@@\\@@", (name of (notebook of theNote))) -- nasty way to escape '; cf. default.js
-					-- do shell script "logger '" & _label & "'"
+					tell me to set _notebook to replaceText("'", "@@\\@@", (name of (notebook of theNote))) -- nasty way to escape '; cf. default.js
+					-- do shell script "logger '" & _notebook & "'"
 					set _date to ((modification date of theNote) as «class isot» as string)
-					set _subtitle to ((modification date of theNote) as string)
+					set _moddate to ((modification date of theNote) as string)
           set _notelink to ((note link of theNote) as string)
 
 					set _tagList to {}
@@ -44,11 +44,8 @@ on run {query, maxResults, debug}
 					set AppleScript's text item delimiters to ", "
 					set _tags to _tagList as text
 					set AppleScript's text item delimiters to saveTID
-					if not _tagList = {} then
-						set _subtitle to _subtitle & " - " & _tags
-					end if
 
-					set res to "{" & "title:'" & _title_enc & "',label:'" & _label & "',date:'" & _date & "',subtitle:'" & _subtitle & "',alwaysShowsSubtitle:true,icon:'com.evernote.Evernote'" & ",notelink:'" & _notelink & "'}"
+					set res to "{" & "title:'" & _title_enc & "',notebook:'" & _notebook & "',date:'" & _date & "',tags:'" & _tags & "',notelink:'" & _notelink & "'}"
 
 					-- Debug
 					tell me to logger("adding to results: " & res & "'", _debug)

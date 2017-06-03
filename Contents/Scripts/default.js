@@ -1,4 +1,4 @@
-var Evernote, SETTINGS, SETTINGS_FILE, createNote, handleNote, loadSettings, log, mapSavedSearch, run, runWithString, saved_searches, syncNow;
+var Evernote, SETTINGS, SETTINGS_FILE, createNote, handleNote, loadSettings, log, mapSavedSearch, mapSearchResults, run, runWithString, saved_searches, syncNow;
 
 loadSettings = function(settingsFile) {
   var object;
@@ -59,6 +59,42 @@ mapSavedSearch = function(saved_searches) {
   return items;
 };
 
+mapSearchResults = function(search_results) {
+  var date, i, len, r, result, results, s_date;
+  results = [];
+  for (i = 0, len = search_results.length; i < len; i++) {
+    r = search_results[i];
+    result = {};
+    result.title = r.title;
+    result.label = r.notebook;
+    result.date = r.date;
+    date = new Date(r.date);
+    s_date = LaunchBar.formatDate(date, {
+      relativeDateFormatting: true,
+      timeStyle: 'short',
+      dateStyle: 'medium'
+    });
+    result.subtitle = r.tags && Object.keys(r.tags).length > 0 ? s_date + " - " + r.tags : "" + s_date;
+    result.action = 'handleNote';
+    result.alwaysShowsSubtitle = true;
+    result.icon = 'com.evernote.Evernote';
+    results.push(result);
+  }
+  results.sort(function(a, b) {
+    var left, right;
+    left = new Date(a.date);
+    right = new Date(b.date);
+    if (left < right) {
+      return 1;
+    }
+    if (left > right) {
+      return -1;
+    }
+    return 0;
+  });
+  return results;
+};
+
 handleNote = function(note) {
   return Evernote.handleNote(note);
 };
@@ -78,10 +114,12 @@ run = function(query) {
 };
 
 runWithString = function(query) {
+  var search_results;
   log("runWithString: '" + query + "'");
   log(JSON.stringify(query));
   if (query.length >= SETTINGS.query_min_len) {
-    return Evernote.search(query, SETTINGS.max_results, SETTINGS.debug);
+    search_results = Evernote.search(query, SETTINGS.max_results, SETTINGS.debug);
+    return mapSearchResults(search_results);
   } else {
     return [
       {
@@ -113,25 +151,9 @@ Evernote = (function() {
   };
 
   Evernote.search = function(query, maxResults, debug) {
-    var i, len, r, results;
+    var results;
     log("@search: '" + query + ", " + maxResults + ", " + debug + "'");
     results = Evernote._evernote_search(query, maxResults, debug);
-    for (i = 0, len = results.length; i < len; i++) {
-      r = results[i];
-      r.action = 'handleNote';
-    }
-    results.sort(function(a, b) {
-      var left, right;
-      left = new Date(a.date);
-      right = new Date(b.date);
-      if (left < right) {
-        1;
-      }
-      if (left > right) {
-        -1;
-      }
-      return 0;
-    });
     log("search result: '" + (JSON.stringify(results)) + "'");
     log("@search: done");
     return results;
@@ -192,6 +214,7 @@ if (!LaunchBar.systemVersion) {
     runWithString: runWithString,
     loadSettings: loadSettings,
     mapSavedSearch: mapSavedSearch,
+    mapSearchResults: mapSearchResults,
     handleNote: handleNote,
     createNote: createNote,
     syncNow: syncNow

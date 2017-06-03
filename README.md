@@ -19,7 +19,7 @@ This Launchbar Action mitigates these short comings.
 
 1. Refactoring
 
-    1. Apple Script result should have own format and mapped to items like saved_searches
+    1. [X] Apple Script result should have own format and mapped to items like saved_searches
 
     1. [X] Only two settings tests: full and default
 

@@ -71,7 +71,12 @@ describe 'Evernote Launchbar Action', ->
         results = lbaction.runWithString "a search"
         expect(lbaction.Evernote.search.calledOnce).to.eql true
         expect(results.length).to.eql 4
+        results.should.all.have.property 'title'
+        results.should.all.have.property 'label'
+        results.should.all.have.property 'subtitle'
         results.should.all.have.property 'action'
+        results.should.all.have.property 'alwaysShowsSubtitle'
+        results.should.all.have.property 'icon'
 
 
   context "handleNote", ->
@@ -184,6 +189,9 @@ class MockLaunchbar
   executeAppleScriptFile: (args) ->
 
   executeAppleScript: (args) ->
+
+  formatDate: (date, args) ->
+    date
 
 
 class MockAction
