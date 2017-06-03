@@ -27,6 +27,10 @@ This Launchbar Action mitigates these short comings.
 
 1. Update Readme
 
+    1. Describe settings configuration file
+
+1. Remove  `settings.js` from repo and .gitignore it
+
 1. Release
 
 1. Future work
