@@ -23,11 +23,11 @@ This Launchbar Action mitigates these short comings.
 
     1. [X] Only two settings tests: full and default
 
-1. Select Icons
+1. [X] Select Icons
 
 1. [X] Change Info.plist back to '.Evernote'
 
-1. Fix minifying
+1. [X] Fix minifying
 
 1. Update Readme
 
@@ -91,4 +91,9 @@ This Launchbar Action mitigates these short comings.
 ## Known Limitations
 
 1. If Evernote is not running, a search will start it automatically, grabbing the focus. Thus, Lauchbar loses the focus and needs to be re-invoked.
+
+
+## Credits
+
+Icons are (C) by [Designerz Base](https://www.iconfinder.com/iconsets/faticons) licensed free for commercial use.
 

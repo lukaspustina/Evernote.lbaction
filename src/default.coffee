@@ -20,10 +20,10 @@ runWithString = (query) ->
     mapSearchResults search_results
   else
     [
-      { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true },
+      { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true, icon: 'search.png' },
       { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
-      { title: "Synchronize now", action: 'syncNow' },
-      { title: "Edit Settings", path: SETTINGS_FILE }
+      { title: "Synchronize now", action: 'syncNow', icon: 'sync.png' },
+      { title: "Edit Settings", path: SETTINGS_FILE, icon: 'settings.png' }
     ]
 
 
@@ -49,7 +49,7 @@ saved_searches = (argument) ->
 
 
 mapSavedSearch = (saved_searches) ->
-  items = ( {title: ss.name, actionArgument: ss.search, action: 'runWithString', actionReturnsItems: true } for ss in saved_searches)
+  items = ( {title: ss.name, actionArgument: ss.search, action: 'runWithString', actionReturnsItems: true, icon: 'search.png', subtitle: ss.search, alwaysShowsSubtitle: true } for ss in saved_searches)
   items
 
 
