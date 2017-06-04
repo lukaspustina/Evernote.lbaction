@@ -39,6 +39,8 @@ This Launchbar Action mitigates these short comings.
 
 1. Future work
 
+    1. Only show saved search menu entry, if there are saved searches
+
     1. Favorite notes via settings
 
     1. Open Search in Evernote main window
