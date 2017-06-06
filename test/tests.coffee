@@ -77,6 +77,7 @@ describe 'Evernote Launchbar Action', ->
         results.should.all.have.property 'action'
         results.should.all.have.property 'alwaysShowsSubtitle'
         results.should.all.have.property 'icon'
+        results.should.all.have.property 'notelink'
 
 
   context "handleNote", ->

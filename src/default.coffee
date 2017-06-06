@@ -75,6 +75,7 @@ mapSearchResults = (search_results) ->
     result.action = 'handleNote'
     result.alwaysShowsSubtitle = true
     result.icon = 'com.evernote.Evernote'
+    result.notelink = r.notelink
 
     results.push result
 
