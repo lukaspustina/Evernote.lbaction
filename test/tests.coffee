@@ -56,7 +56,7 @@ describe 'Evernote Launchbar Action', ->
 
       it 'show default menu', ->
         menu = lbaction.runWithString ""
-        expect(menu.length).to.eql 5
+        expect(menu.length).to.eql 3
 
     context "for query string smaller than query_min_len", ->
 

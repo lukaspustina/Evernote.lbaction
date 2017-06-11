@@ -19,6 +19,8 @@ This Launchbar Action mitigates these short comings.
 
     1. [X] Favorite notes via settings
 
+    1. [X] Only show saved search menu entry, if there are saved searches
+
 1. Refactoring
 
     1. [X] Apple Script result should have own format and mapped to items like saved_searches
@@ -40,8 +42,6 @@ This Launchbar Action mitigates these short comings.
 1. Release
 
 1. Future work
-
-    1. Only show saved search menu entry, if there are saved searches
 
     1. Open Search in Evernote main window
 

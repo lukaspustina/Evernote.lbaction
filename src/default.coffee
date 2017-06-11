@@ -19,13 +19,16 @@ runWithString = (query) ->
     search_results = Evernote.search query, SETTINGS.max_results, SETTINGS.debug
     mapSearchResults search_results
   else
-    [
-      { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true, icon: 'search.png' },
-      { title: "Favorite Notes", action: 'favorites', actionReturnsItems: true, icon: 'favorite.png' },
+    menu = [
       { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
       { title: "Synchronize now", action: 'syncNow', icon: 'sync.png' },
       { title: "Edit Settings", path: SETTINGS_FILE, icon: 'settings.png' }
     ]
+    if SETTINGS.saved_searches.length > 0
+      menu.unshift { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true, icon: 'search.png' },
+    if SETTINGS.favorites.length > 0
+      menu.unshift { title: "Favorite Notes", action: 'favorites', actionReturnsItems: true, icon: 'favorite.png' },
+    menu
 
 
 ## Private
