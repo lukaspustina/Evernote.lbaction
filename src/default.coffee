@@ -22,7 +22,7 @@ runWithString = (query) ->
     menu = [
       { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
       { title: "Synchronize now", action: 'syncNow', icon: 'sync.png' },
-      { title: "Edit Settings", path: SETTINGS_FILE, icon: 'settings.png' }
+      { title: "Edit Settings", action: 'editSettings', actionArgument: SETTINGS_FILE, icon: 'settings.png' }
     ]
     if SETTINGS.saved_searches.length > 0
       menu.unshift { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true, icon: 'search.png' },
@@ -52,6 +52,13 @@ createNote = () ->
 
 syncNow = () ->
   Evernote.syncNow()
+
+
+editSettings = (filename) ->
+  default_settings = "#{Action.path}/Contents/Scripts/default_settings.js"
+  if not File.exists filename
+    LaunchBar.execute '/bin/cp', default_settings, filename
+  LaunchBar.execute '/usr/bin/open', filename
 
 
 saved_searches = (argument) ->
