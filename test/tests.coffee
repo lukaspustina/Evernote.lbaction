@@ -15,12 +15,12 @@ describe 'Evernote Launchbar Action', ->
     global.lbaction = rewire '../target/default.js'
 
     sinon.spy lbaction.Evernote, 'open'
-    sinon.spy lbaction.Evernote, 'handleNote'
     sinon.spy lbaction.Evernote, 'createNote'
     sinon.spy lbaction.Evernote, 'search'
     sinon.spy lbaction.Evernote, 'syncNow'
-    sinon.stub(lbaction.Evernote, '_open_note')
-    sinon.stub(lbaction.Evernote, '_copy_note_link')
+    sinon.stub(lbaction.Evernote, 'open_search_window')
+    sinon.stub(lbaction.Evernote, 'open_note')
+    sinon.stub(lbaction.Evernote, 'copy_note_link')
     sinon.stub(lbaction.Evernote, '_evernote_search').returns [
         { title: "Result 1: " },
         { title: "Result 2: " },
@@ -32,12 +32,12 @@ describe 'Evernote Launchbar Action', ->
 
   afterEach ->
     lbaction.Evernote._evernote_search.restore()
-    lbaction.Evernote._copy_note_link.restore()
-    lbaction.Evernote._open_note.restore()
+    lbaction.Evernote.copy_note_link.restore()
+    lbaction.Evernote.open_note.restore()
+    lbaction.Evernote.open_search_window.restore()
     lbaction.Evernote.syncNow.restore()
     lbaction.Evernote.search.restore()
     lbaction.Evernote.createNote.restore()
-    lbaction.Evernote.handleNote.restore()
     lbaction.Evernote.open.restore()
     delete global.lbaction
     delete global.File
@@ -78,9 +78,10 @@ describe 'Evernote Launchbar Action', ->
         results.should.all.have.property 'alwaysShowsSubtitle'
         results.should.all.have.property 'icon'
         results.should.all.have.property 'notelink'
+        results.should.all.have.property 'query'
 
 
-  context "handleNote", ->
+  context "handle search result", ->
 
     context "open note", ->
 
@@ -89,9 +90,8 @@ describe 'Evernote Launchbar Action', ->
         it "open note window with selected note", ->
           results = lbaction.runWithString "a search"
           results.should.have.length 4
-          lbaction.handleNote(results[2])
-          lbaction.Evernote.handleNote.calledOnce.should.be.eql true
-          lbaction.Evernote._open_note.calledOnce.should.be.eql true
+          lbaction.handleSearchResult(results[2], "a search")
+          lbaction.Evernote.open_note.calledOnce.should.be.eql true
 
     context "copy note link", ->
 
@@ -107,9 +107,27 @@ describe 'Evernote Launchbar Action', ->
         it "copy note link of selected note", ->
           results = lbaction.runWithString "a search"
           results.should.have.length 4
-          lbaction.handleNote(results[2])
-          lbaction.Evernote.handleNote.calledOnce.should.be.eql true
-          lbaction.Evernote._copy_note_link.calledOnce.should.be.eql true
+          lbaction.handleSearchResult(results[2], "a search")
+          lbaction.Evernote.copy_note_link.calledOnce.should.be.eql true
+
+
+    context "open collection window", ->
+
+      context "for query", ->
+
+        beforeEach ->
+          global.LaunchBar.options =
+            commandKey: true
+            shiftKey: true
+
+        afterEach ->
+          global.LaunchBar.options = {}
+
+        it "open collection window for query", ->
+          results = lbaction.runWithString "a search"
+          results.should.have.length 4
+          lbaction.handleSearchResult(results[2], "a search")
+          lbaction.Evernote.open_search_window.calledOnce.should.be.eql true
 
 
   context "createNote", ->
@@ -141,8 +159,8 @@ describe 'Evernote Launchbar Action', ->
     it 'open favorite note', ->
       settings = lbaction.loadSettings lbaction.SETTINGS_FILE
       favorites = lbaction.mapFavorites settings.favorites
-      results = lbaction.handleNote favorites[0]
-      lbaction.Evernote._open_note.calledOnce.should.be.eql true
+      results = lbaction.openNote favorites[0]
+      lbaction.Evernote.open_note.calledOnce.should.be.eql true
 
 
   context "helper", ->
@@ -197,7 +215,7 @@ describe 'Evernote Launchbar Action', ->
         items = lbaction.mapFavorites favorites
         items[0].title.should.be.eql favorites[0].name
         items[0].notelink.should.be.eql favorites[0].note_link
-        items[0].action.should.be.eql 'handleNote'
+        items[0].action.should.be.eql 'openNote'
         items[0].actionReturnsItems.should.be.eql true
 
 

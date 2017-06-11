@@ -15,6 +15,9 @@ This Launchbar Action mitigates these short comings.
 - [Features](#features)
   - [Open Evernote](#open-evernote)
   - [Search for Notes](#search-for-notes)
+    - [Open Note](#open-note)
+    - [Copy Note Link](#copy-note-link)
+    - [Open Evernote Window with Search Query](#open-evernote-window-with-search-query)
   - [Favorite Notes](#favorite-notes)
   - [Saved Searches](#saved-searches)
   - [Create new Note](#create-new-note)
@@ -52,9 +55,17 @@ Search queries may make use of the full [Evernote Search Grammar](https://dev.ev
 
 See the link above for more details of Evernote's search grammer.
 
+#### Open Note
+
 You can open any matching note by navigating to the search result and pressing `<Return>`. The search results show the title, the date of the last modification, the tags -- if any --, and the notebook of each matching note.
 
-You can copy an Evernote link of a note to the clipboard by navigating to the search result and pressing `<CMD>+<Return>`. This allows you to create references to your notes in other applications as well as in other notes. These references will be opened by Evernote on your desktop; not the browser.
+#### Copy Note Link
+
+You can copy an Evernote link of a note to the clipboard by navigating to the search result and pressing `<Cmd>+<Return>`. This allows you to create references to your notes in other applications as well as in other notes. These references will be opened by Evernote on your desktop; not the browser.
+
+#### Open Evernote Window with Search Query
+
+You can also open the main Evernote window with the executed search query results by pressing `<Shift>+<Cmd>+<Return>`. This allows you to see the result notes in Evernote's main window.
 
 ### Favorite Notes
 

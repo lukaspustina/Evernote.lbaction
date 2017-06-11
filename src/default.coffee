@@ -17,7 +17,7 @@ runWithString = (query) ->
 
   if query.length >= SETTINGS.query_min_len
     search_results = Evernote.search query, SETTINGS.max_results, SETTINGS.debug
-    mapSearchResults search_results
+    mapSearchResults search_results, query
   else
     menu = [
       { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
@@ -33,8 +33,17 @@ runWithString = (query) ->
 
 ## Private
 
-handleNote = (note) ->
-  Evernote.handleNote note
+handleSearchResult = (note) ->
+  if LaunchBar.options.commandKey && LaunchBar.options.shiftKey
+    Evernote.open_search_window note.query
+  else if LaunchBar.options.commandKey
+    Evernote.copy_note_link note
+  else
+    Evernote.open_note note
+
+
+openNote = (note) ->
+  Evernote.open_note note
 
 
 createNote = () ->
@@ -65,11 +74,11 @@ mapSavedSearch = (saved_searches) ->
 
 
 mapFavorites = (favorites) ->
-  items = ( {title: f.name, notelink: f.note_link, action: 'handleNote', actionReturnsItems: true, icon: 'com.evernote.Evernote' } for f in favorites)
+  items = ( {title: f.name, notelink: f.note_link, action: 'openNote', actionReturnsItems: true, icon: 'com.evernote.Evernote' } for f in favorites)
   items
 
 
-mapSearchResults = (search_results) ->
+mapSearchResults = (search_results, query) ->
   results = []
 
   # Post process: Add Launchbar display information
@@ -88,10 +97,11 @@ mapSearchResults = (search_results) ->
       "#{s_date} - #{r.tags}"
     else
       "#{s_date}"
-    result.action = 'handleNote'
+    result.action = 'handleSearchResult'
     result.alwaysShowsSubtitle = true
     result.icon = 'com.evernote.Evernote'
     result.notelink = r.notelink
+    result.query = query
 
     results.push result
 
@@ -164,16 +174,7 @@ class Evernote
       []
 
 
-  @handleNote: (note) ->
-    log "@handleNote"
-    if LaunchBar.options.commandKey
-      Evernote._copy_note_link note
-    else
-      Evernote._open_note note
-    log "@handleNote: done"
-
-
-  @_open_note: (note) ->
+  @open_note: (note) ->
     log "@_open_note: '#{JSON.stringify note}'"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
@@ -186,7 +187,21 @@ class Evernote
     log "@_open_note: done"
 
 
-  @_copy_note_link: (note) ->
+  @open_search_window: (query) ->
+    log "@open_search_window: '#{query}'"
+    LaunchBar.executeAppleScript """
+      tell application "LaunchBar" to hide
+      tell application "Evernote"
+        set _window to open collection window with query string "#{query}"
+        -- the next line is necessary to populate the search query field
+        set (query string of _window) to "#{query}"
+        activate
+      end tell
+    """
+    log "@open_search_window: done"
+
+
+  @copy_note_link: (note) ->
     log "@_copy_note_link: '#{JSON.stringify note}'"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
@@ -231,7 +246,8 @@ init = () ->
       mapSavedSearch: mapSavedSearch
       mapFavorites: mapFavorites
       mapSearchResults: mapSearchResults
-      handleNote: handleNote
+      handleSearchResult: handleSearchResult
+      openNote: openNote
       createNote: createNote
       syncNow: syncNow
 
