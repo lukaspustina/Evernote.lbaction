@@ -56,7 +56,7 @@ describe 'Evernote Launchbar Action', ->
 
       it 'show default menu', ->
         menu = lbaction.runWithString ""
-        expect(menu.length).to.eql 4
+        expect(menu.length).to.eql 5
 
     context "for query string smaller than query_min_len", ->
 
@@ -136,6 +136,15 @@ describe 'Evernote Launchbar Action', ->
       results.should.all.have.property 'action'
 
 
+  context "favorite ntoes", ->
+
+    it 'open favorite note', ->
+      settings = lbaction.loadSettings lbaction.SETTINGS_FILE
+      favorites = lbaction.mapFavorites settings.favorites
+      results = lbaction.handleNote favorites[0]
+      lbaction.Evernote._open_note.calledOnce.should.be.eql true
+
+
   context "helper", ->
 
     context "settings", ->
@@ -169,6 +178,7 @@ describe 'Evernote Launchbar Action', ->
           settings.max_results.should.be.eql 30
           settings.query_min_len.should.be.eql 3
           settings.saved_searches.length.should.be.eql 5
+          settings.favorites.length.should.be.eql 2
 
     context "saved searches", ->
 
@@ -178,6 +188,16 @@ describe 'Evernote Launchbar Action', ->
         items[0].title.should.be.eql saved_searches[0].name
         items[0].actionArgument.should.be.eql saved_searches[0].search
         items[0].action.should.be.eql 'runWithString'
+        items[0].actionReturnsItems.should.be.eql true
+
+    context "favorite notes", ->
+
+      it "map favorite not to menu item", ->
+        favorites = [ { name: 'A saved search', note_link: 'evernote://...' } ]
+        items = lbaction.mapFavorites favorites
+        items[0].title.should.be.eql favorites[0].name
+        items[0].notelink.should.be.eql favorites[0].note_link
+        items[0].action.should.be.eql 'handleNote'
         items[0].actionReturnsItems.should.be.eql true
 
 

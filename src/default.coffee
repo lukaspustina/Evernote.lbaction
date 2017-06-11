@@ -21,6 +21,7 @@ runWithString = (query) ->
   else
     [
       { title: "Saved Searches", action: 'saved_searches', actionReturnsItems: true, icon: 'search.png' },
+      { title: "Favorite Notes", action: 'favorites', actionReturnsItems: true, icon: 'favorite.png' },
       { title: "Create new Note", action: 'createNote', icon:'com.evernote.Evernote' },
       { title: "Synchronize now", action: 'syncNow', icon: 'sync.png' },
       { title: "Edit Settings", path: SETTINGS_FILE, icon: 'settings.png' }
@@ -43,13 +44,25 @@ syncNow = () ->
 
 saved_searches = (argument) ->
   log("saved_searches")
-  log(JSON.stringify(arguments))
+  log(JSON.stringify(argument))
 
   mapSavedSearch(SETTINGS.saved_searches)
 
 
+favorites = (argument) ->
+  log("saved_searches")
+  log(JSON.stringify(argument))
+
+  mapFavorites(SETTINGS.favorites)
+
+
 mapSavedSearch = (saved_searches) ->
   items = ( {title: ss.name, actionArgument: ss.search, action: 'runWithString', actionReturnsItems: true, icon: 'search.png', subtitle: ss.search, alwaysShowsSubtitle: true } for ss in saved_searches)
+  items
+
+
+mapFavorites = (favorites) ->
+  items = ( {title: f.name, notelink: f.note_link, action: 'handleNote', actionReturnsItems: true, icon: 'com.evernote.Evernote' } for f in favorites)
   items
 
 
@@ -102,6 +115,8 @@ loadSettings = (settingsFile) ->
     object.debug = false
   if not object.saved_searches
     object.saved_searches = []
+  if not object.favorites
+    object.favorites = []
   if not object.max_results
     object.max_results = 20
   if not object.query_min_len
@@ -211,6 +226,7 @@ init = () ->
       runWithString: runWithString
       loadSettings: loadSettings
       mapSavedSearch: mapSavedSearch
+      mapFavorites: mapFavorites
       mapSearchResults: mapSearchResults
       handleNote: handleNote
       createNote: createNote

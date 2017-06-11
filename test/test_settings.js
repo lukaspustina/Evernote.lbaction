@@ -8,5 +8,9 @@
     { "name": "Saved Search 3", "search": "another search" },
     { "name": "Saved Search 4", "search": "no search" },
     { "name": "Saved Search 5", "search": "i don't know" }
+  ],
+  "favorites": [
+    { "name": "A favorite note", "note_link": "evernote://..." },
+    { "name": "Another favorite note", "note_link": "evernote://..." }
   ]
 }
