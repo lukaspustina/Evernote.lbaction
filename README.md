@@ -1,5 +1,7 @@
 # "Better" Evernote Integration for Launchbar
 
+[![Build Status](https://travis-ci.org/lukaspustina/Evernote.lbaction.svg?branch=master)](https://travis-ci.org/lukaspustina/Evernote.lbaction)
+
 The current Evernote integration in Launchbar version 6.8 (6140) has a few short comings that make it difficult to interact with Evernote through Launchbar. For example, search terms are concatenated with `%20` as in URL encoded space, there is no preview of found notes you could select from, and creating new notes does not work with Evernote more recent than version 5.
 
 This Launchbar Action mitigates these short comings.
