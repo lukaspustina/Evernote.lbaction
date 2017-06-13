@@ -126,7 +126,7 @@ Since Launchbar does offer a built in mechanism for Action settings, this Action
 
 * `debug`: If `true` debug messages are logged to the Console `[default = false]`.
 
-* `max_results: The maximum number of results a search should return.  Increasing this setting may have performance impacts `[default = 20]`.
+* `max_results`: The maximum number of results a search should return.  Increasing this setting may have performance impacts `[default = 20]`.
 
 * `favorite`: A list of favorite note `[default = []]`.
 
