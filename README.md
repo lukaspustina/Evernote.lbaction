@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/lukaspustina/Evernote.lbaction.svg?branch=master)](https://travis-ci.org/lukaspustina/Evernote.lbaction)
 
-The current Evernote integration in Launchbar version 6.8 (6140) has a few short comings that make it difficult to interact with Evernote through Launchbar. For example, search terms are concatenated with `%20` as in URL encoded space, there is no preview of found notes you could select from, and creating new notes does not work with Evernote more recent than version 5.
+The current Evernote integration in Launchbar version 6.8 (6140) has a few shortcomings that make it difficult to interact with Evernote through Launchbar. For example, search terms are concatenated with `%20` as in URL encoded space, there is no preview of found notes you could select from, and creating new notes does not work properliy if you are using Evernote 6 or above.
 
-This Launchbar Action mitigates these short comings.
+This Launchbar Action mitigates these shortcomings.
 
 <p align="center"><img src="assets/Full menu.png"></p>
 
@@ -53,7 +53,7 @@ Search queries may make use of the full [Evernote Search Grammar](https://dev.ev
 
 * `todo:*` -- matches notes that contain todos
 
-See the link above for more details of Evernote's search grammer.
+See the link above for more details of Evernote's search grammar.
 
 #### Open Note
 
@@ -85,7 +85,7 @@ You can easily create a new note in the default notebook with the *Create new No
 
 ### Synchronize Now
 
-You can trigger note synchronization the *Synchronize Now* menu item.
+You can trigger note synchronization with the *Synchronize Now* menu item.
 
 ### Action Settings
 
@@ -96,7 +96,7 @@ In order to change the default settings, add favorite notes, or saved searches, 
 
 1. Clone this repository
 
-1. Deactivate the build-in Evernote integration in Launchbar's _Settings -> Index -> Show Indesx ->  Applications -> Evernote_.
+1. Deactivate the build-in Evernote integration in Launchbar's _Settings -> Index -> Show Index ->  Applications -> Evernote_.
 
 1. Double click the cloned repository directory in Finder.
 
@@ -134,7 +134,7 @@ Since Launchbar does offer a built in mechanism for Action settings, this Action
 
 * `saved_searches`: A list of saved searches `[default = []]`.
 
-    The list elements consist of a name and search query in Evernote's search grammer; cf. [Saved Searches](#saved-searches) for how to use the search grammer. It is important to note that every `"` as part of the search query has be escaped using `\`, i.e., `\"`. See above for examples.
+    The list elements consist of a name and search query in Evernote's search grammar; cf. [Saved Searches](#saved-searches) for how to use the search grammar. It is important to note that every `"` as part of the search query needs to be escaped using `\`, i.e., `\"`. See above for examples.
 
 
 ## Known Limitations
