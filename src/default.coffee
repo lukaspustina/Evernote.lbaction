@@ -155,10 +155,16 @@ class Evernote
     log "@open"
     LaunchBar.executeAppleScript """
       tell application "LaunchBar" to hide
-      tell application "Evernote"
-        open collection window
-        activate
-      end tell
+      if application "Evernote" is running then
+        tell application "Evernote"
+          open collection window
+          activate
+        end tell
+      else
+        tell application "Evernote"
+          activate
+        end tell
+      end if
     """
     log "@open: done"
 
