@@ -1,6 +1,6 @@
 {
   "name": "Evernote.lbaction",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "\"Better\" Evernote Integration for Launchbar",
   "main": "Contents/Scripts/default.js",
   "scripts": {
